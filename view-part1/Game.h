@@ -12,7 +12,7 @@
 #define LIMIT_LIMIT_MSECS 1500
 
 // a type to contain a message (or taunt) provided by a player
-
+// test
 typedef char PlayerMessage[MESSAGE_SIZE];
 
 // registerBestPlay() registers your best move so far with the game engine.
