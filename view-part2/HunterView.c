@@ -10,7 +10,10 @@
      
 struct hunterView {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    int hello;
+    int roundTurn;
+    int totalScore;
+    int hp;
+    
 };
      
 
@@ -38,7 +41,7 @@ void disposeHunterView(HunterView toBeDeleted)
 Round giveMeTheRound(HunterView currentView)
 {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    return 0;
+    return currentView->RoundTurn;
 }
 
 // Get the id of current player
@@ -52,7 +55,7 @@ PlayerID whoAmI(HunterView currentView)
 int giveMeTheScore(HunterView currentView)
 {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    return 0;
+    return currentView->totalScore;
 }
 
 // Get the current health points for a given player
