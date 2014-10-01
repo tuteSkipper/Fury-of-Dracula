@@ -11,15 +11,12 @@
 // #include "Map.h" ... if you decide to use the Map ADT
      
 struct hunterView {
-    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    
-    int currentRound; // current round of the game
-    int currentPlayer; //current player of the game
-    int currentScore; // current score of the game
-    int currentHP[NUM_PLAYERS]; // current hp of each player
-    int currentPlayerLocation[NUM_PLAYERS]; //current player location
-    int currentTrailHistory[NUM_PLAYERS][TRAIL_SIZE]; //current player trail history
-    
+    int roundNumber;                      // total number of rounds
+    int turnNumber;                       // current turn number
+    int score;                            // current score
+    int HP[NUM_PLAYERS];                  // players' health points
+    int trail[NUM_PLAYERS][TRAIL_SIZE];   // players' trails
+    Map m;
 };
      
 
@@ -66,27 +63,29 @@ void disposeHunterView(HunterView toBeDeleted)
 
 // Get the current round
 Round giveMeTheRound(HunterView currentView) {
-    return currentView->currentRound; //done
+    return currentView->roundNumber;
 }
 
 // Get the id of current player
 PlayerID whoAmI(HunterView currentView) {
-    return currentView->currentPlayer; //done
+    return (currentView->turnNumber % NUM_PLAYERS)-1;
 }
 
 // Get the current score
 int giveMeTheScore(HunterView currentView) {
-    return currentView->totalScore; //done
+    return currentView->score;
 }
 
 // Get the current health points for a given player
 int howHealthyIs(HunterView currentView, PlayerID player) {
-    return currentView->currentHP[player]; //done
+    return currentView->HP[player];
 }
 
 // Get the current location id of a given player
 LocationID whereIs(HunterView currentView, PlayerID player) {
-    return currentView->currentPlayerLocation[player]; //done
+    // need to adjust for trail array
+    
+    return currentView->currentPlayerLocation[player];
 }
 
 //// Functions that return information about the history of the game

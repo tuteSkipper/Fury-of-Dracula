@@ -6,20 +6,24 @@
 #include "Game.h"
 #include "GameView.h"
 #include "DracView.h"
-// #include "Map.h" ... if you decide to use the Map ADT
+#include "Map.h"
      
 struct dracView {
-    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    int hello;
+   int roundNumber;                      // total number of rounds
+   int turnNumber;                       // current turn number
+   int score;                            // current score
+   int HP[NUM_PLAYERS];                  // players' health points
+   int trail[NUM_PLAYERS][TRAIL_SIZE];   // players' trails
+   Map m;
 };
-     
+
 
 // Creates a new DracView to summarise the current state of the game
 DracView newDracView(char *pastPlays, PlayerMessage messages[])
 {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     DracView dracView = malloc(sizeof(struct dracView));
-    dracView->hello = 42;
+    dracView->score = 42;
     return dracView;
 }
      
@@ -37,22 +41,19 @@ void disposeDracView(DracView toBeDeleted)
 // Get the current round
 Round giveMeTheRound(DracView currentView)
 {
-    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    return 0;
+    return currentView->roundNumber;
 }
 
 // Get the current score
 int giveMeTheScore(DracView currentView)
 {
-    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    return 0;
+    return currentView->score;
 }
 
 // Get the current health points for a given player
 int howHealthyIs(DracView currentView, PlayerID player)
 {
-    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    return 0;
+    return currentView->HP[player];
 }
 
 // Get the current location id of a given player

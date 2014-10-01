@@ -117,7 +117,7 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
     }
     return view;
 }
-     
+
      
 // Frees all memory previously allocated for the GameView toBeDeleted
 void disposeGameView(GameView toBeDeleted)
@@ -132,34 +132,37 @@ void disposeGameView(GameView toBeDeleted)
 // Get the current round
 Round getRound(GameView currentView)
 {
-    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    return 0;
+    return currentView->roundNumber;
 }
 
 // Get the id of current player - ie whose turn is it?
 PlayerID getCurrentPlayer(GameView currentView)
 {
-    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    return 0;
+    PlayerID player = currentView->turnNumber % NUM_PLAYERS;
+    if (player == 0) {
+        player = PLAYER_DRACULA;
+    } else {
+        player -= 1;
+    }
+    
+    return player;
 }
 
 // Get the current score
 int getScore(GameView currentView)
 {
-    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    return 0;
+    return currentView->score;
 }
 
 // Get the current health points for a given player
 int getHealth(GameView currentView, PlayerID player)
 {
-    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    return 0;
+    return currentView->HP[player];
 }
 
 // Get the current location id of a given player
 LocationID getLocation(GameView currentView, PlayerID player){
-    return currentView->location[player];
+    return 0;
 }
 
 //// Functions that return information about the history of the game
