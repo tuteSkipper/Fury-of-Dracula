@@ -20,12 +20,41 @@ struct gameView {
 // Creates a new GameView to summarise the current state of the game
 GameView newGameView(char *pastPlays, PlayerMessage messages[])
 {
-    GameView gameView = malloc(sizeof(struct gameView));
-    char curr = '\0';
-    int playCount = 0;
-    gameView->m = newMap();
-    while (curr != '\0') {
+    GameView view = malloc(sizeof(struct gameView));
+    view->roundNumber = 0;
+    view->turnNumber = 0;
+    view->score = 0;
+
+    for (int i = 0; i < NUM_PLAYERS; i++) {
+        if (i < PLAYER_DRACULA) {
+            view->HP[i] = GAME_START_HUNTER_LIFE_POINTS;
+        } else {
+            view->HP[i] = GAME_START_BLOOD_POINTS;    
+        }
+    }
+
+    for (i = 0; i < NUM_PLAYERS; i++) {
         
+        if (i < PLAYER_DRACULA) {
+            view->HP[i] = GAME_START_HUNTER_LIFE_POINTS;
+        } else {
+            view->HP[i] = GAME_START_BLOOD_POINTS;    
+        }
+    }
+    
+    gameView->m = newMap();
+
+    int curr = 0;
+    while (pastPlays[curr] != '\0') {
+        curr++; // to bring it to the correct character
+        turnNumber++;
+
+        if (pastPlays[curr] == 'G') {
+            view->roundNumber++;
+        }
+
+
+        curr += 7;     // gets to the space or NULL if no more plays
     }
     return gameView;
 }
