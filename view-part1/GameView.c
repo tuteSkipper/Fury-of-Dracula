@@ -22,6 +22,7 @@ struct gameView {
 GameView newGameView(char *pastPlays, PlayerMessage messages[])
 {
     GameView view = malloc(sizeof(struct gameView));
+    // just wanted to clarify why were using -1 turns when there is no 0th turn in play
     view->roundNumber = -1;
     view->turnNumber = -1;
     view->score = GAME_START_SCORE;
