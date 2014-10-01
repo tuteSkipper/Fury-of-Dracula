@@ -36,8 +36,6 @@ void disposeGameView(GameView toBeDeleted)
 {
     //COMPLETE THIS IMPLEMENTATION
     free( toBeDeleted );
-   
-   // testing testing 1 2 3
 }
 
 
