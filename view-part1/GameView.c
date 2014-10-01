@@ -41,6 +41,7 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
     
     view->m = newMap();
 
+    int researchRecord[NUM_PLAYERS-1] = {0};
     int curr = 0;
     while (pastPlays[curr] != '\0') {
         if (curr > 0) {
@@ -69,22 +70,39 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
             (pastPlays[curr] == 'H')||(pastPlays[curr] == 'M')) {
             for (i = (curr+3); i < (curr+7); i++) {
                 if (pastPlays[i] == 'T') {
-                    HP[(view->turnNumber)%5] -= LIFE_LOSS_TRAP_ENCOUNTER;
+                    view->HP[(view->turnNumber)%5] -= LIFE_LOSS_TRAP_ENCOUNTER;
                 } else if (pastPlays[i] == 'V') {
                     // no life lost, vampire vanquished
                 } else if (pastPlays[i] == 'D') {
-                    HP[(view->turnNumber)%5] -= LIFE_LOSS_DRACULA_ENCOUNTER;
+                    view->HP[(view->turnNumber)%5] -= LIFE_LOSS_DRACULA_ENCOUNTER;
+                    view->HP[PLAYER_DRACULA] -= LIFE_LOSS_HUNTER_ENCOUNTER;
                 }
+
+                // if (view->HP[(view->turnNumber)%5] <= 0) {
+                    // view->trail
+                // }
             }
 
-            for (i = 0; i < TRAIL_SIZE; i++) {
-                if (i < (TRAIL_SIZE-1)) { // check if hunter's stumbled on Drac's trail
-                    if (view->trail[(view->turnNumber)%5][TRAIL_SIZE] == view->trail[PLAYER_DRACULA][i]) {
+            // for (i = 0; i < TRAIL_SIZE; i++) {
+                // if (i < (TRAIL_SIZE-1)) { // check if hunter's stumbled on Drac's trail
+                    // if (view->trail[(view->turnNumber)%5][TRAIL_SIZE-1] == view->trail[PLAYER_DRACULA][i]) {
 
-                    }
-                } else {
+                    // }
+                // } else {
 
+                // }
+            // }
+
+            if (view->trail[(view->turnNumber)%5][TRAIL_SIZE-1] == view->trail[(view->turnNumber)%5][TRAIL_SIZE-2]) { // same place as last round
+                if (researchRecord[(view->turnNumber)%5] == 0) {
+                    researchRecord[(view->turnNumber)%5]++;
                 }
+                view->HP[(view->turnNumber)%5] += 3;
+                while (view->HP[(view->turnNumber)%5] > 9) {
+                    view->HP[(view->turnNumber)%5]--;
+                }
+            } else if (researchRecord[(view->turnNumber)%5] == 1) {
+                researchRecord[(view->turnNumber)%5]--;
             }
 
         } else  { // Dracula's turn
