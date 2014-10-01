@@ -9,11 +9,11 @@
      
 struct gameView {
     int roundNumber;
+    int turnNumber;
     int score;
-    int player;
     int HP[NUM_PLAYERS];
-    int locations[NUM_PLAYERS];
-    int trail[TRAIL_SIZE];
+    int trail[NUM_PLAYERS][TRAIL_SIZE];
+    Map m;
 };
      
 
@@ -21,7 +21,11 @@ struct gameView {
 GameView newGameView(char *pastPlays, PlayerMessage messages[])
 {
     GameView gameView = malloc(sizeof(struct gameView));
-    gameView->hello = 42;
+    char curr = '\0';
+    int playCount = 0;
+    while (curr != '\0') {
+        
+    }
     return gameView;
 }
      
