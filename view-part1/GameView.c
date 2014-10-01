@@ -13,6 +13,7 @@ struct gameView {
     int score;                            // current score
     int HP[NUM_PLAYERS];                  // players' health points
     int trail[NUM_PLAYERS][TRAIL_SIZE];   // players' trails
+    int playerLocation[NUM_PLAYERS];      // players' locations
     Map m;
 };
      
@@ -176,17 +177,18 @@ int getHealth(GameView currentView, PlayerID player)
 }
 
 // Get the current location id of a given player
-LocationID getLocation(GameView currentView, PlayerID player){
-    return 0;
+LocationID getLocation(GameView currentView, PlayerID player) {
+    return currentView->playerLocation[player];
 }
 
 //// Functions that return information about the history of the game
 
 // Fills the trail array with the location ids of the last 6 turns
-void getHistory(GameView currentView, PlayerID player,
-                            LocationID trail[TRAIL_SIZE])
-{
-    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+void getHistory(GameView currentView, PlayerID player, LocationID trail[TRAIL_SIZE]) {
+    int i;
+    for (i =0 ; i < TRAIL_SIZE; i++) {
+        trail[i] = currentView->trail[player][i];
+    }
 }
 
 //// Functions that query the map to find information about connectivity
