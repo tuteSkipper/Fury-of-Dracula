@@ -8,16 +8,18 @@
 // #include "Map.h" ... if you decide to use the Map ADT
      
 struct gameView {
-    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    // TESTING GITHUB STUFFLES *THUMBS UP*
-    int hello;
+    int roundNumber;
+    int score;
+    int player;
+    int HP[NUM_PLAYERS];
+    int locations[NUM_PLAYERS];
+    int trail[TRAIL_SIZE];
 };
      
 
 // Creates a new GameView to summarise the current state of the game
 GameView newGameView(char *pastPlays, PlayerMessage messages[])
 {
-    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     GameView gameView = malloc(sizeof(struct gameView));
     gameView->hello = 42;
     return gameView;
