@@ -5,14 +5,14 @@
 #include "Globals.h"
 #include "Game.h"
 #include "GameView.h"
-// #include "Map.h" ... if you decide to use the Map ADT
+#include "Map.h"
      
 struct gameView {
-    int roundNumber;
-    int turnNumber;
-    int score;
-    int HP[NUM_PLAYERS];
-    int trail[NUM_PLAYERS][TRAIL_SIZE];
+    int roundNumber;                      // total number of rounds
+    int turnNumber;                       // current turn number
+    int score;                            // current score
+    int HP[NUM_PLAYERS];                  // players' health points
+    int trail[NUM_PLAYERS][TRAIL_SIZE];   // players' trails
     Map m;
 };
      
@@ -23,6 +23,7 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
     GameView gameView = malloc(sizeof(struct gameView));
     char curr = '\0';
     int playCount = 0;
+    gameView->m = newMap();
     while (curr != '\0') {
         
     }
