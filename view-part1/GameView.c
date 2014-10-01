@@ -68,6 +68,11 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
 
         if ((pastPlays[curr] == 'G')||(pastPlays[curr] == 'S')||
             (pastPlays[curr] == 'H')||(pastPlays[curr] == 'M')) {
+            if (view->HP[(view->turnNumber)%5] <= 0) {
+                view->score -= SCORE_LOSS_HUNTER_HOSPITAL;
+                view->HP[(view->turnNumber)%5] = 9;
+            }
+
             for (i = (curr+3); i < (curr+7); i++) {
                 if (pastPlays[i] == 'T') {
                     view->HP[(view->turnNumber)%5] -= LIFE_LOSS_TRAP_ENCOUNTER;
@@ -78,12 +83,12 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
                     view->HP[PLAYER_DRACULA] -= LIFE_LOSS_HUNTER_ENCOUNTER;
                 }
 
-                // if (view->HP[(view->turnNumber)%5] <= 0) {
+                // if (view->HP[(view->turnNumber)%5] <= 0) { //HUNTERVIEW?
                     // view->trail
                 // }
             }
 
-            // for (i = 0; i < TRAIL_SIZE; i++) {
+            // for (i = 0; i < TRAIL_SIZE; i++) { //THIS PROBABLY GOES IN HUNTERVIEW
                 // if (i < (TRAIL_SIZE-1)) { // check if hunter's stumbled on Drac's trail
                     // if (view->trail[(view->turnNumber)%5][TRAIL_SIZE-1] == view->trail[PLAYER_DRACULA][i]) {
 
@@ -105,8 +110,18 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
                 researchRecord[(view->turnNumber)%5]--;
             }
 
+            // if ((researchRecord[PLAYER_LORD_GODALMING] == 1)&&
+                // (researchRecord[PLAYER_DR_SEWARD] == 1)&&
+                // (researchRecord[PLAYER_VAN_HELSING] == 1)&&
+                // (researchRecord[PLAYER_MINA_HARKER] == 1)) { // all hunters have not moved for one turn
+            // should probably go in hunterview
+            // SHOW THE LAST MOVE IN DRAC TRAIL
+            // }
+
         } else  { // Dracula's turn
-            
+            if (pastPlays[curr+6] == 'V') {
+                view->score -= SCORE_LOSS_VAMPIRE_MATURES;
+            }            
         }
 
 
