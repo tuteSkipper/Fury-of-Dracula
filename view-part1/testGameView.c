@@ -109,6 +109,9 @@ int main()
     free(edges);
     printf("passed\n");
     disposeGameView(gv);
+    
+    #include "testGameView1.c"
+    
     return 0;
 }
 
