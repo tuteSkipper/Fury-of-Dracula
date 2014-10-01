@@ -65,10 +65,8 @@ int getHealth(GameView currentView, PlayerID player)
 }
 
 // Get the current location id of a given player
-LocationID getLocation(GameView currentView, PlayerID player)
-{
-    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    return 0;
+LocationID getLocation(GameView currentView, PlayerID player){
+    return currentView->location[player];
 }
 
 //// Functions that return information about the history of the game
