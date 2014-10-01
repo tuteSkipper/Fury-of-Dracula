@@ -21,9 +21,9 @@ struct gameView {
 GameView newGameView(char *pastPlays, PlayerMessage messages[])
 {
     GameView view = malloc(sizeof(struct gameView));
-    view->roundNumber = 0;
-    view->turnNumber = 0;
-    view->score = 0;
+    view->roundNumber = -1;
+    view->turnNumber = -1;
+    view->score = GAME_START_SCORE;
 
     for (int i = 0; i < NUM_PLAYERS; i++) {
         if (i < PLAYER_DRACULA) {
@@ -34,29 +34,70 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
     }
 
     for (i = 0; i < NUM_PLAYERS; i++) {
-        
-        if (i < PLAYER_DRACULA) {
-            view->HP[i] = GAME_START_HUNTER_LIFE_POINTS;
-        } else {
-            view->HP[i] = GAME_START_BLOOD_POINTS;    
+        for (int j = 0; j < TRAIL_SIZE; j++) {
+            view->trail[i][j] = NOWHERE;
         }
     }
     
-    gameView->m = newMap();
+    view->m = newMap();
 
     int curr = 0;
     while (pastPlays[curr] != '\0') {
-        curr++; // to bring it to the correct character
-        turnNumber++;
-
-        if (pastPlays[curr] == 'G') {
-            view->roundNumber++;
+        if (curr > 0) {
+            curr++; // to bring it to the correct character
         }
+        view->turnNumber++;
+        if (pastPlays[curr] == 'G') { // update round number
+            view->roundNumber++;
+            if (view->roundNumber > 0) {
+                view->score--; // decrease score after Dracula's turn
+            }
+        }
+
+        for (i = 0; i < TRAIL_SIZE; i++) { // put the move from the turn in the trail
+            if (i < (TRAIL_SIZE-1)) {
+                view->trail[(view->turnNumber)%5][i] = view->trail[(view->turnNumber)%5][i+1];
+            } else {
+                char place[2];
+                place[0] = pastPlays[curr+1];
+                place[1] = pastPlays[curr+2];
+                view->trail[(view->turnNumber)%5][i] = abbrevToID(place);
+            }
+        }
+
+        if ((pastPlays[curr] == 'G')||(pastPlays[curr] == 'S')||
+            (pastPlays[curr] == 'H')||(pastPlays[curr] == 'M')) {
+            for (i = (curr+3); i < (curr+7); i++) {
+                if (pastPlays[i] == 'T') {
+                    HP[(view->turnNumber)%5] -= LIFE_LOSS_TRAP_ENCOUNTER;
+                } else if (pastPlays[i] == 'V') {
+                    // no life lost, vampire vanquished
+                } else if (pastPlays[i] == 'D') {
+                    HP[(view->turnNumber)%5] -= LIFE_LOSS_DRACULA_ENCOUNTER;
+                }
+            }
+
+            for (i = 0; i < TRAIL_SIZE; i++) {
+                if (i < (TRAIL_SIZE-1)) { // check if hunter's stumbled on Drac's trail
+                    if (view->trail[(view->turnNumber)%5][TRAIL_SIZE] == view->trail[PLAYER_DRACULA][i]) {
+
+                    }
+                } else {
+
+                }
+            }
+
+        } else  { // Dracula's turn
+            
+        }
+
+
+
 
 
         curr += 7;     // gets to the space or NULL if no more plays
     }
-    return gameView;
+    return view;
 }
      
      
