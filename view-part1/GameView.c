@@ -245,7 +245,7 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
                         int road, int rail, int sea)
 {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    LocationID *locations = malloc(*numLocations);
+    LocationID *locations = malloc(NUM_MAP_LOCATIONS*sizeof(int));
     int *visited = calloc (currentView->m->nV, sizeof(int));
     int i = 0;
     int counter = 1;
