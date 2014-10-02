@@ -37,7 +37,7 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
         }
     }
 
-    for (i = 0; i < NUM_PLAYERS; i++) {
+    for (int i = 0; i < NUM_PLAYERS; i++) {
         for (int j = 0; j < TRAIL_SIZE; j++) {
             view->trail[i][j] = NOWHERE;
         }
@@ -61,7 +61,7 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
 
         currPlayer = getCurrentPlayer(view);
 
-        for (i = 0; i < TRAIL_SIZE; i++) { // put the move from the turn in the trail
+        for (int i = 0; i < TRAIL_SIZE; i++) { // put the move from the turn in the trail
             if (i < (TRAIL_SIZE-1)) {
                 view->trail[currPlayer][i] = view->trail[currPlayer][i+1];
             } else {
@@ -79,7 +79,7 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
                 view->HP[currPlayer] = 9;
             }
 
-            for (i = (curr+3); i < (curr+7); i++) {
+            for (int i = (curr+3); i < (curr+7); i++) {
                 if (pastPlays[i] == 'T') {
                     view->HP[currPlayer] -= LIFE_LOSS_TRAP_ENCOUNTER;
                 } else if (pastPlays[i] == 'V') {
@@ -105,7 +105,7 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
             // }
 
             if (view->trail[currPlayer][TRAIL_SIZE-1] == view->trail[currPlayer][TRAIL_SIZE-2]) { // same place as last round
-                if (researchRecord[currPlayer == 0) {
+                if (researchRecord[currPlayer == 0]) {
                     researchRecord[currPlayer]++;
                 }
                 view->HP[currPlayer] += 3;
