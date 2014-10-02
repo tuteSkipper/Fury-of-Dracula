@@ -68,6 +68,7 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
 
       for (int i = 0; i < TRAIL_SIZE; i++) { // put the move from the turn in the trail
          if (i < (TRAIL_SIZE-1)) {
+             printf("i: %d | ",i);
             view->trail[currPlayer][i] = view->trail[currPlayer][i+1];
          } else {
             char place[3];
@@ -227,9 +228,11 @@ LocationID getLocation(GameView currentView, PlayerID player) {
 
 // Fills the trail array with the location ids of the last 6 turns
 void getHistory(GameView currentView, PlayerID player, LocationID trail[TRAIL_SIZE]) {
-   int i;
-   for (i =0 ; i < TRAIL_SIZE; i++) {
-      trail[i] = currentView->trail[player][i];
+    int i;
+    int j;
+    for (i =0, j = TRAIL_SIZE-1 ; i < TRAIL_SIZE; i++, j--) {
+        trail[i] = currentView->trail[player][j];
+        printf("trail: %d\n",trail[i]);
    }
 }
 
