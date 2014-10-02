@@ -16,6 +16,7 @@ int main()
     gv = newGameView("", messages1);
     printf("current player: %d\n", getCurrentPlayer(gv));
     assert(getCurrentPlayer(gv) == PLAYER_LORD_GODALMING);
+    printf("current round: %d\n", getRound(gv));
     assert(getRound(gv) == 0);
     assert(getHealth(gv,PLAYER_DR_SEWARD) == GAME_START_HUNTER_LIFE_POINTS);
     assert(getHealth(gv,PLAYER_DRACULA) == GAME_START_BLOOD_POINTS);
