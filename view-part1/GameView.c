@@ -22,9 +22,8 @@ struct gameView {
 GameView newGameView(char *pastPlays, PlayerMessage messages[])
 {
     GameView view = malloc(sizeof(struct gameView));
-    // just wanted to clarify why were using -1 turns when there is no 0th turn in play
     view->roundNumber = -1;
-    view->turnNumber = -1;
+    view->turnNumber = 0;
     view->score = GAME_START_SCORE;
 
     for (int i = 0; i < NUM_PLAYERS; i++) {
@@ -59,29 +58,29 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
 
         for (i = 0; i < TRAIL_SIZE; i++) { // put the move from the turn in the trail
             if (i < (TRAIL_SIZE-1)) {
-                view->trail[(view->turnNumber)%5][i] = view->trail[(view->turnNumber)%5][i+1];
+                view->trail[getCurrentPlayer(view)][i] = view->trail[getCurrentPlayer(view)][i+1];
             } else {
                 char place[2];
                 place[0] = pastPlays[curr+1];
                 place[1] = pastPlays[curr+2];
-                view->trail[(view->turnNumber)%5][i] = abbrevToID(place);
+                view->trail[getCurrentPlayer(view)][i] = abbrevToID(place);
             }
         }
 
         if ((pastPlays[curr] == 'G')||(pastPlays[curr] == 'S')||
             (pastPlays[curr] == 'H')||(pastPlays[curr] == 'M')) {
-            if (view->HP[(view->turnNumber)%5] <= 0) {
+            if (view->HP[getCurrentPlayer(view)] <= 0) {
                 view->score -= SCORE_LOSS_HUNTER_HOSPITAL;
-                view->HP[(view->turnNumber)%5] = 9;
+                view->HP[getCurrentPlayer(view)] = 9;
             }
 
             for (i = (curr+3); i < (curr+7); i++) {
                 if (pastPlays[i] == 'T') {
-                    view->HP[(view->turnNumber)%5] -= LIFE_LOSS_TRAP_ENCOUNTER;
+                    view->HP[getCurrentPlayer(view)] -= LIFE_LOSS_TRAP_ENCOUNTER;
                 } else if (pastPlays[i] == 'V') {
                     // no life lost, vampire vanquished
                 } else if (pastPlays[i] == 'D') {
-                    view->HP[(view->turnNumber)%5] -= LIFE_LOSS_DRACULA_ENCOUNTER;
+                    view->HP[getCurrentPlayer(view)] -= LIFE_LOSS_DRACULA_ENCOUNTER;
                     view->HP[PLAYER_DRACULA] -= LIFE_LOSS_HUNTER_ENCOUNTER;
                 }
 
@@ -100,16 +99,16 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
                 // }
             // }
 
-            if (view->trail[(view->turnNumber)%5][TRAIL_SIZE-1] == view->trail[(view->turnNumber)%5][TRAIL_SIZE-2]) { // same place as last round
-                if (researchRecord[(view->turnNumber)%5] == 0) {
-                    researchRecord[(view->turnNumber)%5]++;
+            if (view->trail[getCurrentPlayer(view)][TRAIL_SIZE-1] == view->trail[getCurrentPlayer(view)][TRAIL_SIZE-2]) { // same place as last round
+                if (researchRecord[getCurrentPlayer(view) == 0) {
+                    researchRecord[getCurrentPlayer(view)]++;
                 }
-                view->HP[(view->turnNumber)%5] += 3;
-                while (view->HP[(view->turnNumber)%5] > 9) {
-                    view->HP[(view->turnNumber)%5]--;
+                view->HP[getCurrentPlayer(view)] += 3;
+                while (view->HP[getCurrentPlayer(view)] > 9) {
+                    view->HP[getCurrentPlayer(view)]--;
                 }
-            } else if (researchRecord[(view->turnNumber)%5] == 1) {
-                researchRecord[(view->turnNumber)%5]--;
+            } else if (researchRecord[getCurrentPlayer(view)] == 1) {
+                researchRecord[getCurrentPlayer(view)]--;
             }
 
             // if ((researchRecord[PLAYER_LORD_GODALMING] == 1)&&
@@ -125,10 +124,6 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
                 view->score -= SCORE_LOSS_VAMPIRE_MATURES;
             }            
         }
-
-
-
-
 
         curr += 7;     // gets to the space or NULL if no more plays
     }
