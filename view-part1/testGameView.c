@@ -14,6 +14,7 @@ int main()
     printf("Test basic empty initialisation\n");
     PlayerMessage messages1[] = {};
     gv = newGameView("", messages1);
+    printf("current player: %d\n", getCurrentPlayer(gv));
     assert(getCurrentPlayer(gv) == PLAYER_LORD_GODALMING);
     assert(getRound(gv) == 0);
     assert(getHealth(gv,PLAYER_DR_SEWARD) == GAME_START_HUNTER_LIFE_POINTS);

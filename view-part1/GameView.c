@@ -1,6 +1,7 @@
 // GameView.c ... GameView ADT implementation
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <assert.h>
 #include "Globals.h"
 #include "Game.h"
@@ -152,13 +153,19 @@ Round getRound(GameView currentView)
 }
 
 // Get the id of current player - ie whose turn is it?
-PlayerID getCurrentPlayer(GameView currentView)
-{
+PlayerID getCurrentPlayer(GameView currentView) {
     PlayerID player = currentView->turnNumber % NUM_PLAYERS;
+//    printf("turn num:%d\n",currentView->turnNumber);
     if (player == 0) {
-        player = PLAYER_DRACULA;
+        player = PLAYER_LORD_GODALMING;
+    } else if (player == 1) {
+        player = PLAYER_DR_SEWARD;
+    } else if (player == 2) {
+        player = PLAYER_VAN_HELSING;
+    } else if (player == 3) {
+        player = PLAYER_MINA_HARKER;
     } else {
-        player -= 1;
+        player = PLAYER_DRACULA;
     }
     
     return player;
