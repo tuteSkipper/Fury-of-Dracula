@@ -247,10 +247,12 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     LocationID *locations = malloc(*numLocations);
     int i = 0;
+    locations[i] = from;
+    i++;
     VList curr;
     if (player != PLAYER_DRACULA) {
         if (road == TRUE) {
-            for (curr = currentView->map->connections[from]; curr != NULL; curr = curr->next) {
+            for (curr = currentView->m->connections[from]; curr != NULL; curr = curr->next) {
                 if (curr->type == ROAD) {
                     locations[i] = curr->v;
                     i++;
@@ -260,32 +262,54 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
         if (rail == TRUE) {
             int railLength = round+player;
             if (railLength%4 == 1) {
-                for (curr = currentView->map->connections[from]; curr != NULL;   curr = curr->next) {
+                for (curr = currentView->m->connections[from]; curr != NULL; curr = curr->next) {
                     if (curr->type == RAIL) {
                         locations[i] = curr->v;
                         i++;
                     }
                 }
             } else if (railLength%4 == 2) {
-                 for ()
-                 int j = 0;
-                 for (curr = currentView->m->connections[from]; curr != NULL;   curr = curr->next) {
-                 if (curr->type == RAIL) {
-                 locations[i] = curr->v;
-                 nextStop[j] = curr->v;
-                 j++;
-                 i++;
-                 }
-                 }
-                 
+                VList second;
+                for (curr = currentView->m->connections[from]; curr != NULL; curr = curr->next) {
+                    if (curr->type == RAIL) {
+                        locations[i] = curr->v;
+                        i++;
+                        for (second = currentView->m->connections[curr->v]; second != NULL; second = second->next) {
+                            if (curr->type == RAIL) {
+                                locations[i] = second->v;
+                                i++;
+                            }
+                        }
+                    }
+                }
             } else if (railLength%4 == 3) {
-                
+                VList second;
+                VList third;
+                for (curr = currentView->m->connections[from]; curr != NULL; curr = curr->next) {
+                    if (curr->type == RAIL) {
+                        locations[i] = curr->v;
+                        i++;
+                        for (second = currentView->m->connections[curr->v]; second != NULL; second = second->next) {
+                            if (curr->type == RAIL) {
+                                locations[i] = second->v;
+                                i++;
+                                for (third = currentView->m->connections[second->v]; third != NULL; third = third->next) {
+                                    if (curr->type == RAIL) {
+                                        locations[i] = third->v;
+                                        i++;
+                                    }
+                                }
+                                
+                            }
+                        }
+                    }
+                }
             } else {
                 rail = FALSE;
             }
         }
         if (sea == TRUE) {
-            for (curr = currentView->map->connections[from]; curr != NULL; curr = curr->next) {
+            for (curr = currentView->m->connections[from]; curr != NULL; curr = curr->next) {
                 if (curr->type == BOAT) {
                     locations[i] = curr->v;
                     i++;
@@ -294,7 +318,7 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
         }
     } else {
         if (road == TRUE) {
-            for (curr = currentView->map->connections[from]; curr != NULL; curr = curr->next) {
+            for (curr = currentView->m->connections[from]; curr != NULL; curr = curr->next) {
                 if (curr->type == ROAD && curr->v != 60) {
                     locations[i] = curr->v;
                     i++;
@@ -302,7 +326,7 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
             }
         }
         if (sea == TRUE) {
-            for (curr = currentView->map->connections[from]; curr != NULL; curr = curr->next) {
+            for (curr = currentView->m->connections[from]; curr != NULL; curr = curr->next) {
                 if (curr->type == BOAT && curr->v != 60) {
                     locations[i] = curr->v;
                     i++;
@@ -310,5 +334,6 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
             }
         }
     }
+    *numLocations = i;
     return locations;
 }
