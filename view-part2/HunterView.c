@@ -66,10 +66,31 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
             if (i < (TRAIL_SIZE-1)) {
                 hunterView->trail[playerID][i] = hunterView->trail[playerID][i+1];
             } else {
-                char place[2];
+                char place[3];
                 place[0] = pastPlays[curr+1];
                 place[1] = pastPlays[curr+2];
-                hunterView->trail[playerID][i] = abbrevToID(place);
+                place[2] = '\0';
+                if (strcmp(place, "C?") == 0) {
+                    view->trail[playerID][i] = CITY_UNKNOWN;
+                } else if (strcmp(place, "S?") == 0) {
+                    view->trail[playerID][i] = SEA_UNKNOWN;
+                } else if (strcmp(place, "HI") == 0) {
+                    view->trail[playerID][i] = HIDE;
+                } else if (strcmp(place, "D1") == 0) {
+                    view->trail[playerID][i] = DOUBLE_BACK_1;
+                } else if (strcmp(place, "D2") == 0) {
+                    view->trail[playerID][i] = DOUBLE_BACK_2;
+                } else if (strcmp(place, "D3") == 0) {
+                    view->trail[playerID][i] = DOUBLE_BACK_3;
+                } else if (strcmp(place, "D4") == 0) {
+                    view->trail[playerID][i] = DOUBLE_BACK_4;
+                } else if (strcmp(place, "D5") == 0) {
+                    view->trail[playerID][i] = DOUBLE_BACK_5;
+                } else if (strcmp(place, "TP") == 0) {
+                    view->trail[playerID][i] = CITY_UNKNOWN;
+                } else {
+                    view->trail[playerID][i] = abbrevToID(place);
+                }
             }
         }
         
