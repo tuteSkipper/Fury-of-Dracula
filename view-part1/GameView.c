@@ -14,7 +14,7 @@ struct gameView {
     int score;                            // current score
     int HP[NUM_PLAYERS];                  // players' health points
     int trail[NUM_PLAYERS][TRAIL_SIZE];   // players' trails
-    int playerLocation[NUM_PLAYERS];      // players' locations
+    //int playerLocation[NUM_PLAYERS];      // players' locations
     Map m;
 };
      
@@ -32,8 +32,10 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
     for (int i = 0; i < NUM_PLAYERS; i++) {
         if (i < PLAYER_DRACULA) {
             view->HP[i] = GAME_START_HUNTER_LIFE_POINTS;
+            //view->playerLocation[i] = UNKNOWN_LOCATION;
         } else {
-            view->HP[i] = GAME_START_BLOOD_POINTS;    
+            view->HP[i] = GAME_START_BLOOD_POINTS;
+            //view->playerLocation[i] = UNKNOWN_LOCATION;
         }
     }
 
@@ -60,6 +62,8 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
         }
 
         currPlayer = getCurrentPlayer(view);
+        printf("out-> turn %d\n",(view->turnNumber));
+        //printf("curr player %d\n",getCurrentPlayer(view));
 
         for (int i = 0; i < TRAIL_SIZE; i++) { // put the move from the turn in the trail
             if (i < (TRAIL_SIZE-1)) {
@@ -155,20 +159,16 @@ Round getRound(GameView currentView)
 // Get the id of current player - ie whose turn is it?
 PlayerID getCurrentPlayer(GameView currentView) {
     PlayerID player = currentView->turnNumber % NUM_PLAYERS;
-//    printf("turn num:%d\n",currentView->turnNumber);
-    if (player == 0) {
+    printf("->turn num: %d\n",currentView->turnNumber);
+    if(currentView->turnNumber == 0 || currentView->turnNumber == 1){
         player = PLAYER_LORD_GODALMING;
-    } else if (player == 1) {
-        player = PLAYER_DR_SEWARD;
-    } else if (player == 2) {
-        player = PLAYER_VAN_HELSING;
-    } else if (player == 3) {
-        player = PLAYER_MINA_HARKER;
-    } else {
+        return player;
+    } else if(player == 0){
         player = PLAYER_DRACULA;
+    } else {
+        player -= 1;
     }
-    
-    return player;
+    return (player);
 }
 
 // Get the current score
@@ -185,7 +185,20 @@ int getHealth(GameView currentView, PlayerID player)
 
 // Get the current location id of a given player
 LocationID getLocation(GameView currentView, PlayerID player) {
-    return currentView->playerLocation[player];
+    int i=0,j=0;
+    for (i=0; i < NUM_PLAYERS; i++) {
+        printf("player%d:",i);
+        for (j = 0 ; j < TRAIL_SIZE ; j++) {
+            printf(" %d ",currentView->trail[i][j]);
+        }
+        printf("\n");
+    }
+    int x=0;
+    while (x < TRAIL_SIZE-1){
+        x++;
+    }
+    printf("%d , %d\n",player, x);
+    return currentView->trail[player][x]; //playerLocation[player];
 }
 
 //// Functions that return information about the history of the game
