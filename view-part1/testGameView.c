@@ -63,6 +63,8 @@ int main()
     printf("passed\n");        
     disposeGameView(gv);
 
+    #include "testGameView1.c"
+    
     printf("Test for Dracula doubling back at sea, and losing blood points (Hunter View)\n");
     PlayerMessage messages4[] = {"Hello","Rubbish","Stuff","","Mwahahah","Aha!","","","","Back I go"};
     gv = newGameView("GGE.... SGE.... HGE.... MGE.... DS?.... "
@@ -71,6 +73,7 @@ int main()
     getHistory(gv,PLAYER_DRACULA,history);
     assert(history[0] == DOUBLE_BACK_1);
     assert(history[1] == SEA_UNKNOWN);
+    printf("HP: %d\n",getHealth(gv,PLAYER_DRACULA));
     assert(getHealth(gv,PLAYER_DRACULA) == GAME_START_BLOOD_POINTS - 4);
     assert(getCurrentPlayer(gv) == 0);
     printf("passed\n");
@@ -115,7 +118,6 @@ int main()
     printf("passed\n");
     disposeGameView(gv);
     
-    #include "testGameView1.c"
     
     return 0;
 }
