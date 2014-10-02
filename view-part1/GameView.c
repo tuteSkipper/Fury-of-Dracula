@@ -108,15 +108,9 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
                 // }
             // }
 
-<<<<<<< HEAD
             if (view->trail[currPlayer][TRAIL_SIZE-1] == view->trail[currPlayer][TRAIL_SIZE-2]) { // same place as last round
                 if (researchRecord[currPlayer == 0) {
                     researchRecord[currPlayer]++;
-=======
-            if (view->trail[getCurrentPlayer(view)][TRAIL_SIZE-1] == view->trail[getCurrentPlayer(view)][TRAIL_SIZE-2]) { // same place as last round
-                if (researchRecord[getCurrentPlayer(view)] == 0) {
-                    researchRecord[getCurrentPlayer(view)]++;
->>>>>>> origin/master
                 }
                 view->HP[currPlayer] += 3;
                 while (view->HP[currPlayer] > 9) {
