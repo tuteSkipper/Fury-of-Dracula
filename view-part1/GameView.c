@@ -26,6 +26,8 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
     view->turnNumber = 0;
     view->score = GAME_START_SCORE;
 
+    PlayerID currPlayer;
+
     for (int i = 0; i < NUM_PLAYERS; i++) {
         if (i < PLAYER_DRACULA) {
             view->HP[i] = GAME_START_HUNTER_LIFE_POINTS;
@@ -56,31 +58,33 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
             }
         }
 
+        currPlayer = getCurrentPlayer(view);
+
         for (i = 0; i < TRAIL_SIZE; i++) { // put the move from the turn in the trail
             if (i < (TRAIL_SIZE-1)) {
-                view->trail[getCurrentPlayer(view)][i] = view->trail[getCurrentPlayer(view)][i+1];
+                view->trail[currPlayer][i] = view->trail[currPlayer][i+1];
             } else {
                 char place[2];
                 place[0] = pastPlays[curr+1];
                 place[1] = pastPlays[curr+2];
-                view->trail[getCurrentPlayer(view)][i] = abbrevToID(place);
+                view->trail[currPlayer][i] = abbrevToID(place);
             }
         }
 
         if ((pastPlays[curr] == 'G')||(pastPlays[curr] == 'S')||
             (pastPlays[curr] == 'H')||(pastPlays[curr] == 'M')) {
-            if (view->HP[getCurrentPlayer(view)] <= 0) {
+            if (view->HP[currPlayer] <= 0) {
                 view->score -= SCORE_LOSS_HUNTER_HOSPITAL;
-                view->HP[getCurrentPlayer(view)] = 9;
+                view->HP[currPlayer] = 9;
             }
 
             for (i = (curr+3); i < (curr+7); i++) {
                 if (pastPlays[i] == 'T') {
-                    view->HP[getCurrentPlayer(view)] -= LIFE_LOSS_TRAP_ENCOUNTER;
+                    view->HP[currPlayer] -= LIFE_LOSS_TRAP_ENCOUNTER;
                 } else if (pastPlays[i] == 'V') {
                     // no life lost, vampire vanquished
                 } else if (pastPlays[i] == 'D') {
-                    view->HP[getCurrentPlayer(view)] -= LIFE_LOSS_DRACULA_ENCOUNTER;
+                    view->HP[currPlayer] -= LIFE_LOSS_DRACULA_ENCOUNTER;
                     view->HP[PLAYER_DRACULA] -= LIFE_LOSS_HUNTER_ENCOUNTER;
                 }
 
@@ -99,16 +103,16 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
                 // }
             // }
 
-            if (view->trail[getCurrentPlayer(view)][TRAIL_SIZE-1] == view->trail[getCurrentPlayer(view)][TRAIL_SIZE-2]) { // same place as last round
-                if (researchRecord[getCurrentPlayer(view) == 0) {
-                    researchRecord[getCurrentPlayer(view)]++;
+            if (view->trail[currPlayer][TRAIL_SIZE-1] == view->trail[currPlayer][TRAIL_SIZE-2]) { // same place as last round
+                if (researchRecord[currPlayer == 0) {
+                    researchRecord[currPlayer]++;
                 }
-                view->HP[getCurrentPlayer(view)] += 3;
-                while (view->HP[getCurrentPlayer(view)] > 9) {
-                    view->HP[getCurrentPlayer(view)]--;
+                view->HP[currPlayer] += 3;
+                while (view->HP[currPlayer] > 9) {
+                    view->HP[currPlayer]--;
                 }
-            } else if (researchRecord[getCurrentPlayer(view)] == 1) {
-                researchRecord[getCurrentPlayer(view)]--;
+            } else if (researchRecord[currPlayer] == 1) {
+                researchRecord[currPlayer]--;
             }
 
             // if ((researchRecord[PLAYER_LORD_GODALMING] == 1)&&
