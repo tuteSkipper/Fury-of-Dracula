@@ -255,16 +255,6 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
     counter++;
     VList curr;
     if (player != PLAYER_DRACULA) {
-        if (road == TRUE) {
-            for (curr = currentView->m->connections[from]; curr != NULL; curr = curr->next) {
-                if (curr->type == ROAD && visited[curr->v] == 0) {
-                    locations[i] = curr->v;
-                    visited[curr->v] = counter;
-                    i++;
-                    counter++;
-                }
-            }
-        }
         if (rail == TRUE) {
             int railLength = round+player;
             if (railLength%4 == 1) {
@@ -281,8 +271,8 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
                 for (curr = currentView->m->connections[from]; curr != NULL; curr = curr->next) {
                     if (curr->type == RAIL && visited[curr->v] == 0) {
                         locations[i] = curr->v;
-                        visited[curr->v] = counter;
                         i++;
+                        visited[curr->v] = counter;
                         counter++;
                         for (second = currentView->m->connections[curr->v]; second != NULL; second = second->next) {
                             if (second->type == RAIL && visited[second->v] == 0) {
@@ -326,6 +316,16 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
                 rail = FALSE;
             }
         }
+        if (road == TRUE) {
+            for (curr = currentView->m->connections[from]; curr != NULL; curr = curr->next) {
+                if (curr->type == ROAD && visited[curr->v] == 0) {
+                    locations[i] = curr->v;
+                    visited[curr->v] = counter;
+                    i++;
+                    counter++;
+                }
+            }
+        }
         if (sea == TRUE) {
             for (curr = currentView->m->connections[from]; curr != NULL; curr = curr->next) {
                 if (curr->type == BOAT && visited[curr->v] == 0) {
@@ -359,6 +359,5 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
         }
     }
     *numLocations = i;
-
     return locations;
 }
