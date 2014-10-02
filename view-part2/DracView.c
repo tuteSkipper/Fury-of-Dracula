@@ -179,7 +179,11 @@ void giveMeTheTrail(DracView currentView, PlayerID player,
 LocationID *whereCanIgo(DracView currentView, int *numLocations, int road, int sea)
 {
    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-   return NULL;
+   LocationID *locations[numLocations];
+   LocationID = currLocation = whereIs(currentView, PLAYER_DRACULA);
+   locations = *connectedLocations(currentView, *numLocations, currLocation,
+                                    PLAYER_DRACULA, currentView->roundNumber, TRUE, FALSE, TRUE);
+   return locations;
 }
 
 // What are the specified player's next possible moves
@@ -187,5 +191,9 @@ LocationID *whereCanTheyGo(DracView currentView, int *numLocations,
                      PlayerID player, int road, int rail, int sea)
 {
    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-   return NULL;
+   LocationID *locations[numLocations];
+   LocationID = currLocation = whereIs(currentView, player);
+   locations = *connectedLocations(currentView, *numLocations, currLocation,
+                                    player, currentView->roundNumber, TRUE, TRUE, TRUE);
+   return locations;
 }
