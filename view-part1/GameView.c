@@ -26,13 +26,8 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
     view->turnNumber = 0;
     view->score = GAME_START_SCORE;
 
-<<<<<<< HEAD
     PlayerID currPlayer;
 
-=======
-    int i;
-    
->>>>>>> origin/master
     for (int i = 0; i < NUM_PLAYERS; i++) {
         if (i < PLAYER_DRACULA) {
             view->HP[i] = GAME_START_HUNTER_LIFE_POINTS;
