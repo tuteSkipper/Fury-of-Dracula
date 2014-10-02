@@ -1,4 +1,4 @@
-GameView gv;
+//GameView gv;
 
 printf("Test for Dracula die in the first round\n");
 PlayerMessage messages001[] = {"p1","p2","p3","p4","p5"};
