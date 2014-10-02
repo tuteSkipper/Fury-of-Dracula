@@ -244,6 +244,71 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
                         LocationID from, PlayerID player, Round round,
                         int road, int rail, int sea)
 {
-   //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-   return NULL;
+    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+    LocationID *locations = malloc(*numLocations);
+    int i = 0;
+    VList curr;
+    if (player != PLAYER_DRACULA) {
+        if (road == TRUE) {
+            for (curr = currentView->map->connections[from]; curr != NULL; curr = curr->next) {
+                if (curr->type == ROAD) {
+                    locations[i] = curr->v;
+                    i++;
+                }
+            }
+        }
+        if (rail == TRUE) {
+            int railLength = round+player;
+            if (railLength%4 == 1) {
+                for (curr = currentView->map->connections[from]; curr != NULL;   curr = curr->next) {
+                    if (curr->type == RAIL) {
+                        locations[i] = curr->v;
+                        i++;
+                    }
+                }
+                /*} else if (railLength%4 == 2) {
+                 int nextStop[];
+                 int j = 0;
+                 for (curr = currentView->m->connections[from]; curr->v != NULL;   curr = curr->next) {
+                 if (curr->type == RAIL) {
+                 locations[i] = curr->v;
+                 nextStop[j] = curr->v;
+                 j++;
+                 i++;
+                 }
+                 }
+                 
+                 } else if (railLength%4 == 3) {*/
+                
+            } else {
+                rail = FALSE;
+            }
+        }
+        if (sea == TRUE) {
+            for (curr = currentView->map->connections[from]; curr != NULL; curr = curr->next) {
+                if (curr->type == BOAT) {
+                    locations[i] = curr->v;
+                    i++;
+                }
+            }
+        }
+    } else {
+        if (road == TRUE) {
+            for (curr = currentView->map->connections[from]; curr != NULL; curr = curr->next) {
+                if (curr->type == ROAD && curr->v != 60) {
+                    locations[i] = curr->v;
+                    i++;
+                }
+            }
+        }
+        if (sea == TRUE) {
+            for (curr = currentView->map->connections[from]; curr != NULL; curr = curr->next) {
+                if (curr->type == BOAT && curr->v != 60) {
+                    locations[i] = curr->v;
+                    i++;
+                }
+            }
+        }
+    }
+    return locations;
 }
