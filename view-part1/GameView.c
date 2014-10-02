@@ -26,6 +26,8 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
     view->turnNumber = 0;
     view->score = GAME_START_SCORE;
 
+    int i;
+    
     for (int i = 0; i < NUM_PLAYERS; i++) {
         if (i < PLAYER_DRACULA) {
             view->HP[i] = GAME_START_HUNTER_LIFE_POINTS;
@@ -100,7 +102,7 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
             // }
 
             if (view->trail[getCurrentPlayer(view)][TRAIL_SIZE-1] == view->trail[getCurrentPlayer(view)][TRAIL_SIZE-2]) { // same place as last round
-                if (researchRecord[getCurrentPlayer(view) == 0) {
+                if (researchRecord[getCurrentPlayer(view)] == 0) {
                     researchRecord[getCurrentPlayer(view)]++;
                 }
                 view->HP[getCurrentPlayer(view)] += 3;
