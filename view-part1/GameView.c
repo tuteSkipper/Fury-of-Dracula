@@ -266,10 +266,10 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
                         i++;
                     }
                 }
-                /*} else if (railLength%4 == 2) {
-                 int nextStop[];
+            } else if (railLength%4 == 2) {
+                 for ()
                  int j = 0;
-                 for (curr = currentView->m->connections[from]; curr->v != NULL;   curr = curr->next) {
+                 for (curr = currentView->m->connections[from]; curr != NULL;   curr = curr->next) {
                  if (curr->type == RAIL) {
                  locations[i] = curr->v;
                  nextStop[j] = curr->v;
@@ -278,7 +278,7 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
                  }
                  }
                  
-                 } else if (railLength%4 == 3) {*/
+            } else if (railLength%4 == 3) {
                 
             } else {
                 rail = FALSE;
