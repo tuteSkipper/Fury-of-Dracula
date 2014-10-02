@@ -24,19 +24,19 @@ struct hunterView {
 HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
     HunterView hunterView = malloc(sizeof(struct hunterView));
     
-    view->roundNumber = -1;
-    view->turnNumber = -1;
-    view->score = GAME_START_SCORE;
+    hunterView->roundNumber = -1;
+    hunterView->turnNumber = -1;
+    hunterView->score = GAME_START_SCORE;
     
-    Player playerID = (hunterView->turnNumber % 5)-1;
+    PlayerID playerID;
     
-    
-    hunterView->currentHP[0] = GAME_START_HUNTER_LIFE_POINTS;
-    hunterView->currentHP[1] = GAME_START_HUNTER_LIFE_POINTS;
-    hunterView->currentHP[2] = GAME_START_HUNTER_LIFE_POINTS;
-    hunterView->currentHP[3] = GAME_START_HUNTER_LIFE_POINTS;
-    hunterView->currentHP[4] = GAME_START_BLOOD_POINTS;
-    
+    for (int i = 0; i < NUM_PLAYERS; i++) {
+        if (i < PLAYER_DRACULA) {
+            hunterView->HP[i] = GAME_START_HUNTER_LIFE_POINTS;
+        } else {
+            hunterView->HP[i] = GAME_START_BLOOD_POINTS;    
+        }
+    }    
     
     // can't reveal Dracula trail to hunters ?
     for (i = 0; i < NUM_PLAYERS; i++) {
@@ -60,6 +60,7 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
                 hunterView->score--; // decrease score after Dracula's turn
             }
         }
+        playerID = getCurrentPlayer(view);
         
         for (i = 0; i < TRAIL_SIZE; i++) { // put the move from the turn in the trail
             if (i < (TRAIL_SIZE-1)) {
@@ -116,28 +117,21 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
                 researchRecord[playerID]--;
             }
             
-            if ((researchRecord[PLAYER_LORD_GODALMING] == 1)&& (researchRecord[PLAYER_DR_SEWARD] == 1)&&
-                (researchRecord[PLAYER_VAN_HELSING] == 1)&& (researchRecord[PLAYER_MINA_HARKER] == 1)) {
+            if ((researchRecord[PLAYER_LORD_GODALMING] == 1)&&(researchRecord[PLAYER_DR_SEWARD] == 1)&&
+                (researchRecord[PLAYER_VAN_HELSING] == 1)&&(researchRecord[PLAYER_MINA_HARKER] == 1)) {
                 // all hunters have not moved for one go and researches
                 int research = hunterView->trail[PLAYER_DRACULA][0]; // should this be an aspect of the hunterView struct or a static function????
-                
             }
             
-        /*} else  { // Dracula's turn
+        } else  { // Dracula's turn
             if (pastPlays[curr+6] == 'V') {
                 hunterView->score -= SCORE_LOSS_VAMPIRE_MATURES;
             }
-        } Not needed in HunterView*/
-        
-        
-        
-        
+        } // Not needed in HunterView
+          // ^ Needed for score, though???
         
         curr += 7;     // gets to the space or NULL if no more plays
-    
-    
     }
-
     
     return hunterView;
 }
