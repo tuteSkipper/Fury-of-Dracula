@@ -190,7 +190,12 @@ void giveMeTheTrail(HunterView currentView, PlayerID player, LocationID trail[TR
 LocationID *whereCanIgo(HunterView currentView, int *numLocations, int road, int rail, int sea)
 {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    return NULL;
+    LocationID *locations[numLocations];
+    PlayerID me = whoAmI(currentView);
+    LocationID = currLocation = whereIs(currentView, me);
+    locations = *connectedLocations(currentView, *numLocations, currLocation,
+                                    me, currentView->roundNumber, TRUE, FALSE, TRUE);
+    return locations;
 }
 
 // What are the specified player's next possible moves
@@ -198,5 +203,9 @@ LocationID *whereCanTheyGo(HunterView currentView, int *numLocations,
                            PlayerID player, int road, int rail, int sea)
 {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    return NULL;
+    LocationID *locations[numLocations];
+    LocationID = currLocation = whereIs(currentView, player);
+    locations = *connectedLocations(currentView, *numLocations, currLocation,
+                                    player, currentView->roundNumber, TRUE, FALSE, TRUE);
+    return locations;
 }
