@@ -122,15 +122,17 @@ DracView newDracView(char *pastPlays, PlayerMessage messages[])
                // no life lost, vampire vanquished
             } else if (pastPlays[i] == 'D') {
                view->HP[currPlayer] -= LIFE_LOSS_DRACULA_ENCOUNTER;
+               printf("%d %d\n", currPlayer, view->HP[currPlayer]);
                view->HP[PLAYER_DRACULA] -= LIFE_LOSS_HUNTER_ENCOUNTER;
             }
          }
 
-         if (view->trail[currPlayer][TRAIL_SIZE-1] == view->trail[currPlayer][TRAIL_SIZE-2]) { // same place as last round
+         if (view->trail[currPlayer][0] == view->trail[currPlayer][1]) { // same place as last round
             if (researchRecord[currPlayer] == 0) {
                researchRecord[currPlayer]++;
             }
             view->HP[currPlayer] += 3;
+            printf("dsjaod: %d %d\n", currPlayer, view->HP[currPlayer]);
             while (view->HP[currPlayer] > 9) {
                view->HP[currPlayer]--;
             }
@@ -175,13 +177,13 @@ int giveMeTheScore(DracView currentView)
 // Get the current health points for a given player
 int howHealthyIs(DracView currentView, PlayerID player)
 {
+   printf("%d %d\n", player, currentView->HP[player]);
    return currentView->HP[player];
 }
 
 // Get the current location id of a given player
 LocationID whereIs(DracView currentView, PlayerID player) {
-
-   return currentView->trail[player][0];;
+   return currentView->trail[player][0];
 }
 
 // Get the most recent move of a given player
