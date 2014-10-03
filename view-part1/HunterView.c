@@ -55,7 +55,7 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
 
     int researchRecord[NUM_PLAYERS-1] = {0};
     int curr = 0;
-    while (pastPlays[curr] != '\0') {;
+    while (pastPlays[curr] != '\0') {
         if (curr > 0) {
             curr++; // to bring it to the correct character
         }
@@ -66,10 +66,8 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
                 view->score--; // decrease score after Dracula's turn
             }
         }
-        if (view->roundNumber == -1) {
-            view->roundNumber++;
-        }
         playerID = whoAmI(view);
+        printf ("playerID is %d\n", playerID);
         
         for (i = 0; i < TRAIL_SIZE; i++) { // put the move from the turn in the trail
             if (i < (TRAIL_SIZE-1)) {
@@ -164,6 +162,10 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
         curr += 7;     // gets to the space or NULL if no more plays
     }
     
+    if (view->roundNumber == -1) {
+        view->roundNumber++;
+    }
+    
     return view;
 }
 
@@ -186,10 +188,14 @@ Round giveMeTheRound(HunterView currentView) {
 // Get the id of current player
 PlayerID whoAmI(HunterView currentView) {
    PlayerID player = currentView->turnNumber % NUM_PLAYERS;
-   if(currentView->turnNumber == 0){
-      player = PLAYER_LORD_GODALMING;
+   if (player == 0) {
+      player = PLAYER_DRACULA;
    } else {
       player -= 1;
+   }
+    
+   if (currentView->turnNumber == 0) {
+      player = PLAYER_LORD_GODALMING;
    }
    return (player);
 }
