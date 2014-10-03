@@ -1,6 +1,7 @@
 // HunterView.c ... HunterView ADT implementation
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <assert.h>
 #include <string.h>
 
@@ -27,7 +28,7 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
     HunterView view = malloc(sizeof(struct hunterView));
     
     view->roundNumber = -1;
-    view->turnNumber = -1;
+    view->turnNumber = 0;
     view->score = GAME_START_SCORE;
     
     PlayerID playerID;
@@ -54,7 +55,7 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
 
     int researchRecord[NUM_PLAYERS-1] = {0};
     int curr = 0;
-    while (pastPlays[curr] != '\0') {
+    while (pastPlays[curr] != '\0') {;
         if (curr > 0) {
             curr++; // to bring it to the correct character
         }
@@ -64,6 +65,9 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
             if (view->roundNumber > 0) {
                 view->score--; // decrease score after Dracula's turn
             }
+        }
+        if (view->roundNumber == -1) {
+            view->roundNumber++;
         }
         playerID = whoAmI(view);
         
@@ -182,11 +186,8 @@ Round giveMeTheRound(HunterView currentView) {
 // Get the id of current player
 PlayerID whoAmI(HunterView currentView) {
    PlayerID player = currentView->turnNumber % NUM_PLAYERS;
-   //printf("->turn num: %d\n",currentView->turnNumber);
-   if(currentView->turnNumber == 0 || currentView->turnNumber == 1){
+   if(currentView->turnNumber == 0){
       player = PLAYER_LORD_GODALMING;
-   } else if(player == 0){
-      player = PLAYER_DRACULA;
    } else {
       player -= 1;
    }

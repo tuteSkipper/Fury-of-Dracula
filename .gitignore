@@ -12,3 +12,6 @@ testHunterView.o
 testDracView
 testHunterView
 testGameView
+*.o
+
+*.o
