@@ -249,7 +249,16 @@ LocationID whereIs(DracView currentView, PlayerID player) {
 void lastMove(DracView currentView, PlayerID player,
              LocationID *start, LocationID *end)
 {
-   //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+   (*start) = currentView->trail[player][TRAIL_SIZE - 2];
+   (*end) = currentView->trail[player][TRAIL_SIZE - 1];
+   
+   printf ("Location ID  start is %d\n", (*start));
+   printf ("Location ID end is %d\n", (*end));
+   /*if ((*start) == NOWHERE) {
+      
+   }*/
+    
+    
    return;
 }
 
