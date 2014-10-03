@@ -181,7 +181,7 @@ int howHealthyIs(DracView currentView, PlayerID player)
 // Get the current location id of a given player
 LocationID whereIs(DracView currentView, PlayerID player) {
 
-   return currentView->trail[player][TRAIL_SIZE-1];;
+   return currentView->trail[player][0];;
 }
 
 // Get the most recent move of a given player
@@ -205,7 +205,7 @@ void whatsThere(DracView currentView, LocationID where, int *numTraps, int *numV
 void giveMeTheTrail(DracView currentView, PlayerID player, LocationID trail[TRAIL_SIZE]){
     int i;
     int j;
-    for (i =0, j = TRAIL_SIZE-1 ; i < TRAIL_SIZE; i++, j--) {
+    for (i =0, j = 0 ; i < TRAIL_SIZE; i++, j++) {
         trail[i] = currentView->trail[player][j];
     }
 }
