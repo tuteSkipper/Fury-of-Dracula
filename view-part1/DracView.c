@@ -249,14 +249,11 @@ LocationID whereIs(DracView currentView, PlayerID player) {
 void lastMove(DracView currentView, PlayerID player,
              LocationID *start, LocationID *end)
 {
-   (*start) = currentView->trail[player][TRAIL_SIZE - 2];
-   (*end) = currentView->trail[player][TRAIL_SIZE - 1];
+   (*start) = currentView->trail[player][1];
+   (*end) = currentView->trail[player][0];
    
    printf ("Location ID  start is %d\n", (*start));
    printf ("Location ID end is %d\n", (*end));
-   /*if ((*start) == NOWHERE) {
-      
-   }*/
     
     
    return;
@@ -265,7 +262,8 @@ void lastMove(DracView currentView, PlayerID player,
 // Find out what minions are placed at the specified location
 void whatsThere(DracView currentView, LocationID where, int *numTraps, int *numVamps)
 {
-   //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+   currentView->m; 
+   
    return;
 }
 
