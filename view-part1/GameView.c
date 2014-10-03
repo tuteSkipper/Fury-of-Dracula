@@ -160,8 +160,66 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
             view->score -= SCORE_LOSS_VAMPIRE_MATURES;
          }
 
-         if (idToType(view->trail[currPlayer][0]) == 2) {
-            view->HP[currPlayer] -= LIFE_LOSS_SEA;
+
+
+         if (view->trail[currPlayer][0] != NOWHERE) {
+            if (view->trail[currPlayer][0] < NUM_MAP_LOCATIONS) {
+               if (idToType(view->trail[currPlayer][0]) == 2) {
+                  view->HP[currPlayer] -= LIFE_LOSS_SEA;
+               }
+            } else if (view->trail[currPlayer][0] == SEA_UNKNOWN) {
+               view->HP[currPlayer] -= LIFE_LOSS_SEA;
+            } else if (view->trail[currPlayer][0] == DOUBLE_BACK_1) {
+               if (view->trail[currPlayer][1] != NOWHERE) {
+                  if (view->trail[currPlayer][1] < NUM_MAP_LOCATIONS) {
+                     if (idToType(view->trail[currPlayer][1]) == 2) {
+                        view->HP[currPlayer] -= LIFE_LOSS_SEA;
+                     }
+                  } else if (view->trail[currPlayer][1] == SEA_UNKNOWN) {
+                     view->HP[currPlayer] -= LIFE_LOSS_SEA;
+                  }
+               }
+            } else if (view->trail[currPlayer][0] == DOUBLE_BACK_2) {
+               if (view->trail[currPlayer][1] != NOWHERE) {
+                  if (view->trail[currPlayer][2] < NUM_MAP_LOCATIONS) {
+                     if (idToType(view->trail[currPlayer][2]) == 2) {
+                        view->HP[currPlayer] -= LIFE_LOSS_SEA;
+                     }
+                  } else if (view->trail[currPlayer][2] == SEA_UNKNOWN) {
+                     view->HP[currPlayer] -= LIFE_LOSS_SEA;
+                  }
+               }
+            } else if (view->trail[currPlayer][0] == DOUBLE_BACK_3) {
+               if (view->trail[currPlayer][1] != NOWHERE) {
+                  if (view->trail[currPlayer][3] < NUM_MAP_LOCATIONS) {
+                     if (idToType(view->trail[currPlayer][3]) == 2) {
+                        view->HP[currPlayer] -= LIFE_LOSS_SEA;
+                     }
+                  } else if (view->trail[currPlayer][3] == SEA_UNKNOWN) {
+                     view->HP[currPlayer] -= LIFE_LOSS_SEA;
+                  }
+               }
+            } else if (view->trail[currPlayer][0] == DOUBLE_BACK_4) {
+               if (view->trail[currPlayer][1] != NOWHERE) {
+                  if (view->trail[currPlayer][4] < NUM_MAP_LOCATIONS) {
+                     if (idToType(view->trail[currPlayer][4]) == 2) {
+                        view->HP[currPlayer] -= LIFE_LOSS_SEA;
+                     }
+                  } else if (view->trail[currPlayer][4] == SEA_UNKNOWN) {
+                     view->HP[currPlayer] -= LIFE_LOSS_SEA;
+                  }
+               }
+            } else if (view->trail[currPlayer][0] == DOUBLE_BACK_5) {
+               if (view->trail[currPlayer][1] != NOWHERE) {
+                  if (view->trail[currPlayer][5] < NUM_MAP_LOCATIONS) {
+                     if (idToType(view->trail[currPlayer][5]) == 2) {
+                        view->HP[currPlayer] -= LIFE_LOSS_SEA;
+                     }
+                  } else if (view->trail[currPlayer][5] == SEA_UNKNOWN) {
+                     view->HP[currPlayer] -= LIFE_LOSS_SEA;
+                  }
+               }
+            }
          }
       }
 

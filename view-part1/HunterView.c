@@ -74,9 +74,10 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
         playerID = whoAmI(view);
         //printf ("playerID is %d\n", playerID);
         
-        for (i = 0; i < TRAIL_SIZE; i++) { // put the move from the turn in the trail
-            if (i < (TRAIL_SIZE-1)) {
-                view->trail[playerID][i] = view->trail[playerID][i+1];
+        for (i = TRAIL_SIZE-1; i >= 0; i--) { // put the move from the turn in the trail
+         // printf("%d\n", playerID);
+            if (i > 0) {
+               view->trail[playerID][i] = view->trail[playerID][i-1];
             } else {
                 char place[3];
                 place[0] = pastPlays[curr+1];
@@ -169,6 +170,56 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
                   }
                } else if (view->trail[playerID][0] == SEA_UNKNOWN) {
                   view->HP[playerID] -= LIFE_LOSS_SEA;
+               } else if (view->trail[playerID][0] == DOUBLE_BACK_1) {
+                  if (view->trail[playerID][1] != NOWHERE) {
+                     if (view->trail[playerID][1] < NUM_MAP_LOCATIONS) {
+                        if (idToType(view->trail[playerID][1]) == 2) {
+                           view->HP[playerID] -= LIFE_LOSS_SEA;
+                        }
+                     } else if (view->trail[playerID][1] == SEA_UNKNOWN) {
+                        view->HP[playerID] -= LIFE_LOSS_SEA;
+                     }
+                  }
+               } else if (view->trail[playerID][0] == DOUBLE_BACK_2) {
+                  if (view->trail[playerID][1] != NOWHERE) {
+                     if (view->trail[playerID][2] < NUM_MAP_LOCATIONS) {
+                        if (idToType(view->trail[playerID][2]) == 2) {
+                           view->HP[playerID] -= LIFE_LOSS_SEA;
+                        }
+                     } else if (view->trail[playerID][2] == SEA_UNKNOWN) {
+                        view->HP[playerID] -= LIFE_LOSS_SEA;
+                     }
+                  }
+               } else if (view->trail[playerID][0] == DOUBLE_BACK_3) {
+                  if (view->trail[playerID][1] != NOWHERE) {
+                     if (view->trail[playerID][3] < NUM_MAP_LOCATIONS) {
+                        if (idToType(view->trail[playerID][3]) == 2) {
+                           view->HP[playerID] -= LIFE_LOSS_SEA;
+                        }
+                     } else if (view->trail[playerID][3] == SEA_UNKNOWN) {
+                        view->HP[playerID] -= LIFE_LOSS_SEA;
+                     }
+                  }
+               } else if (view->trail[playerID][0] == DOUBLE_BACK_4) {
+                  if (view->trail[playerID][1] != NOWHERE) {
+                     if (view->trail[playerID][4] < NUM_MAP_LOCATIONS) {
+                        if (idToType(view->trail[playerID][4]) == 2) {
+                           view->HP[playerID] -= LIFE_LOSS_SEA;
+                        }
+                     } else if (view->trail[playerID][4] == SEA_UNKNOWN) {
+                        view->HP[playerID] -= LIFE_LOSS_SEA;
+                     }
+                  }
+               } else if (view->trail[playerID][0] == DOUBLE_BACK_5) {
+                  if (view->trail[playerID][1] != NOWHERE) {
+                     if (view->trail[playerID][5] < NUM_MAP_LOCATIONS) {
+                        if (idToType(view->trail[playerID][5]) == 2) {
+                           view->HP[playerID] -= LIFE_LOSS_SEA;
+                        }
+                     } else if (view->trail[playerID][5] == SEA_UNKNOWN) {
+                        view->HP[playerID] -= LIFE_LOSS_SEA;
+                     }
+                  }
                }
             }
         } // Not needed in HunterView
