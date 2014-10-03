@@ -8,7 +8,7 @@
 #include "Map.h"
 #include "Places.h"
 
-typedef struct vNode *VList;
+/*typedef struct vNode *VList;
 
 struct vNode {
    LocationID  v;    // ALICANTE, etc
@@ -20,7 +20,7 @@ struct MapRep {
    int   nV;         // #vertices
    int   nE;         // #edges
    VList connections[NUM_MAP_LOCATIONS]; // array of lists
-};
+};*/
 
 static void addConnections(Map);
 
