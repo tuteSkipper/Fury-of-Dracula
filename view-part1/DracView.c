@@ -143,7 +143,11 @@ DracView newDracView(char *pastPlays, PlayerMessage messages[])
       } else  { // Dracula's turn
          if (pastPlays[curr+6] == 'V') {
             view->score -= SCORE_LOSS_VAMPIRE_MATURES;
-         }            
+         }
+
+         if (idToType(view->trail[currPlayer][0]) == 2) {
+            view->HP[currPlayer] -= LIFE_LOSS_SEA;
+         }
       }
 
       curr += 7;     // gets to the space or NULL if no more plays

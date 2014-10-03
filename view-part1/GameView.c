@@ -68,10 +68,10 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
       //printf("out-> turn %d\n",(view->turnNumber));
       //printf("curr player %d\n",getCurrentPlayer(view));
 
-      for (i = 0; i < TRAIL_SIZE; i++) { // put the move from the turn in the trail
-         if (i < (TRAIL_SIZE-1)) {
-             //printf("i: %d | ",i);
-            view->trail[currPlayer][i] = view->trail[currPlayer][i+1];
+      for (i = TRAIL_SIZE-1; i >= 0; i--) { // put the move from the turn in the trail
+         // printf("%d\n", currPlayer);
+         if (i > 0) {
+            view->trail[currPlayer][i] = view->trail[currPlayer][i-1];
          } else {
             char place[3];
             place[0] = pastPlays[curr+1];
@@ -115,6 +115,7 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
                // no life lost, vampire vanquished
             } else if (pastPlays[i] == 'D') {
                view->HP[currPlayer] -= LIFE_LOSS_DRACULA_ENCOUNTER;
+               printf("%d %d\n", currPlayer, view->HP[currPlayer]);
                view->HP[PLAYER_DRACULA] -= LIFE_LOSS_HUNTER_ENCOUNTER;
             }
 
@@ -133,11 +134,12 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
             // }
          // }
 
-         if (view->trail[currPlayer][TRAIL_SIZE-1] == view->trail[currPlayer][TRAIL_SIZE-2]) { // same place as last round
-            if (researchRecord[currPlayer == 0]) {
+         if (view->trail[currPlayer][0] == view->trail[currPlayer][1]) { // same place as last round
+            if (researchRecord[currPlayer] == 0) {
                researchRecord[currPlayer]++;
             }
             view->HP[currPlayer] += 3;
+            printf("dsjaod: %d %d\n", currPlayer, view->HP[currPlayer]);
             while (view->HP[currPlayer] > 9) {
                view->HP[currPlayer]--;
             }
@@ -156,7 +158,11 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
       } else  { // Dracula's turn
          if (pastPlays[curr+6] == 'V') {
             view->score -= SCORE_LOSS_VAMPIRE_MATURES;
-         }            
+         }
+
+         if (idToType(view->trail[currPlayer][0]) == 2) {
+            view->HP[currPlayer] -= LIFE_LOSS_SEA;
+         }
       }
 
       curr += 7;     // gets to the space or NULL if no more plays
@@ -209,20 +215,20 @@ int getHealth(GameView currentView, PlayerID player)
 
 // Get the current location id of a given player
 LocationID getLocation(GameView currentView, PlayerID player) {
-   int i=0,j=0;
-   for (i=0; i < NUM_PLAYERS; i++) {
+   // int i=0,j=0;
+   // for (i=0; i < NUM_PLAYERS; i++) {
       //printf("player%d:",i);
-      for (j = 0 ; j < TRAIL_SIZE ; j++) {
+      // for (j = 0 ; j < TRAIL_SIZE ; j++) {
          //printf(" %d ",currentView->trail[i][j]);
-      }
+      // }
       //printf("\n");
-   }
-   int x=0;
-   while (x < TRAIL_SIZE-1){
-      x++;
-   }
+   // }
+   // int x=0;
+   // while (x < TRAIL_SIZE-1){
+      // x++;
+   // }
 //   printf("%d , %d\n",player, x);
-   return currentView->trail[player][x]; //playerLocation[player];
+   return currentView->trail[player][0]; //playerLocation[player];
 }
 
 //// Functions that return information about the history of the game
@@ -231,10 +237,9 @@ LocationID getLocation(GameView currentView, PlayerID player) {
 void getHistory(GameView currentView, PlayerID player, LocationID trail[TRAIL_SIZE]) {
     int i;
     int j;
-    for (i =0, j = TRAIL_SIZE-1 ; i < TRAIL_SIZE; i++, j--) {
+    for (i =0, j = 0 ; i < TRAIL_SIZE; i++, j++) {
         trail[i] = currentView->trail[player][j];
-        //printf("trail: %d\n",trail[i]);
-   }
+    }
 }
 
 //// Functions that query the map to find information about connectivity

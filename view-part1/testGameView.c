@@ -63,7 +63,7 @@ int main()
     printf("passed\n");        
     disposeGameView(gv);
 
-    #include "testGameView1.c"
+    // #include "testGameView1.c"
     
     printf("Test for Dracula doubling back at sea, and losing blood points (Hunter View)\n");
     PlayerMessage messages4[] = {"Hello","Rubbish","Stuff","","Mwahahah","Aha!","","","","Back I go"};

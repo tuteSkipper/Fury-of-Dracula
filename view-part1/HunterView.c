@@ -161,6 +161,10 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
             if (pastPlays[curr+6] == 'V') {
                 view->score -= SCORE_LOSS_VAMPIRE_MATURES;
             }
+
+            if (idToType(view->trail[playerID][0]) == 2) {
+               view->HP[playerID] -= LIFE_LOSS_SEA;
+            }
         } // Not needed in HunterView
           // ^ Needed for score, though???
         
