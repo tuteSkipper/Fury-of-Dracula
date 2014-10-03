@@ -181,7 +181,16 @@ Round giveMeTheRound(HunterView currentView) {
 
 // Get the id of current player
 PlayerID whoAmI(HunterView currentView) {
-    return (currentView->turnNumber % NUM_PLAYERS)-1;
+   PlayerID player = currentView->turnNumber % NUM_PLAYERS;
+   //printf("->turn num: %d\n",currentView->turnNumber);
+   if(currentView->turnNumber == 0 || currentView->turnNumber == 1){
+      player = PLAYER_LORD_GODALMING;
+   } else if(player == 0){
+      player = PLAYER_DRACULA;
+   } else {
+      player -= 1;
+   }
+   return (player);
 }
 
 // Get the current score

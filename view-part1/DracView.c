@@ -24,14 +24,13 @@ struct dracView {
 // Creates a new DracView to summarise the current state of the game
 DracView newDracView(char *pastPlays, PlayerMessage messages[])
 {
-   GameView view = malloc(sizeof(struct gameView));
+   DracView view = malloc(sizeof(struct dracView));
    view->roundNumber = -1;
    view->turnNumber = 0;
    view->score = GAME_START_SCORE;
 
-   PlayerID currPlayer;
-
-   for (int i = 0; i < NUM_PLAYERS; i++) {
+   int i;
+   for (i = 0; i < NUM_PLAYERS; i++) {
       if (i < PLAYER_DRACULA) {
          view->HP[i] = GAME_START_HUNTER_LIFE_POINTS;
       } else {
@@ -39,8 +38,9 @@ DracView newDracView(char *pastPlays, PlayerMessage messages[])
       }
    }
 
+   int j;
    for (i = 0; i < NUM_PLAYERS; i++) {
-      for (int j = 0; j < TRAIL_SIZE; j++) {
+      for (j = 0; j < TRAIL_SIZE; j++) {
          view->trail[i][j] = NOWHERE;
       }
    }
@@ -62,7 +62,15 @@ DracView newDracView(char *pastPlays, PlayerMessage messages[])
          }
       }
 
-      currPlayer = getCurrentPlayer(view);
+      PlayerID currPlayer = view->turnNumber % NUM_PLAYERS;
+      //printf("->turn num: %d\n",currentView->turnNumber);
+      if(view->turnNumber == 0 || view->turnNumber == 1){
+         currPlayer = PLAYER_LORD_GODALMING;
+      } else if(currPlayer == 0){
+         currPlayer = PLAYER_DRACULA;
+      } else {
+         currPlayer -= 1;
+      }
 
       for (i = 0; i < TRAIL_SIZE; i++) { // put the move from the turn in the trail
          if (i < (TRAIL_SIZE-1)) {
@@ -115,7 +123,7 @@ DracView newDracView(char *pastPlays, PlayerMessage messages[])
          }
 
          if (view->trail[currPlayer][TRAIL_SIZE-1] == view->trail[currPlayer][TRAIL_SIZE-2]) { // same place as last round
-            if (researchRecord[currPlayer == 0) {
+            if (researchRecord[currPlayer] == 0) {
                researchRecord[currPlayer]++;
             }
             view->HP[currPlayer] += 3;
