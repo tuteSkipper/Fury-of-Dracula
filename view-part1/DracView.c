@@ -93,7 +93,7 @@ DracView newDracView(char *pastPlays, PlayerMessage messages[])
             } else if (strcmp(place, "D5") == 0) {
                view->trail[currPlayer][i] = DOUBLE_BACK_5;
             } else if (strcmp(place, "TP") == 0) {
-               view->trail[currPlayer][i] = CITY_UNKNOWN;
+               view->trail[currPlayer][i] = TELEPORT;
             } else {
                printf("%d %s %d\n", i, place, currPlayer);
                view->trail[currPlayer][i] = abbrevToID(place);
@@ -137,6 +137,10 @@ DracView newDracView(char *pastPlays, PlayerMessage messages[])
       } else  { // Dracula's turn
          if (pastPlays[curr+6] == 'V') {
             view->score -= SCORE_LOSS_VAMPIRE_MATURES;
+         }
+
+         if (view->trail[currPlayer][0] == TELEPORT) {
+            view->HP[currPlayer] += LIFE_GAIN_CASTLE_DRACULA;
          }
 
          if (view->trail[currPlayer][0] != NOWHERE) {
@@ -243,6 +247,9 @@ int howHealthyIs(DracView currentView, PlayerID player)
 
 // Get the current location id of a given player
 LocationID whereIs(DracView currentView, PlayerID player) {
+   if (currentView->trail[player][0] == TELEPORT) {
+      return CASTLE_DRACULA;
+    }
    return currentView->trail[player][0];
 }
 

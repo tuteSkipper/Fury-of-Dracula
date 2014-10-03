@@ -89,7 +89,7 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
                 } else if (strcmp(place, "D5") == 0) {
                     view->trail[playerID][i] = DOUBLE_BACK_5;
                 } else if (strcmp(place, "TP") == 0) {
-                    view->trail[playerID][i] = CITY_UNKNOWN;
+                    view->trail[playerID][i] = TELEPORT;
                 } else {
                     view->trail[playerID][i] = abbrevToID(place);
                 }
@@ -152,6 +152,10 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
         } else  { // Dracula's turn
             if (pastPlays[curr+6] == 'V') {
                 view->score -= SCORE_LOSS_VAMPIRE_MATURES;
+            }
+
+            if (view->trail[playerID][0] == TELEPORT) {
+               view->HP[playerID] += LIFE_GAIN_CASTLE_DRACULA;
             }
 
             if (view->trail[playerID][0] != NOWHERE) {
@@ -272,6 +276,9 @@ int howHealthyIs(HunterView currentView, PlayerID player) {
 // Get the current location id of a given player
 LocationID whereIs(HunterView currentView, PlayerID player) {
     // need to adjust for trail array
+    if (currentView->trail[player][0] == TELEPORT) {
+      return CASTLE_DRACULA;
+    }
     return currentView->trail[player][0];
 }
 

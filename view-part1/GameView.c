@@ -88,7 +88,7 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
             } else if (strcmp(place, "D5") == 0) {
                view->trail[currPlayer][i] = DOUBLE_BACK_5;
             } else if (strcmp(place, "TP") == 0) {
-               view->trail[currPlayer][i] = CITY_UNKNOWN;
+               view->trail[currPlayer][i] = TELEPORT;
             } else {
                view->trail[currPlayer][i] = abbrevToID(place);
             }
@@ -154,6 +154,9 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
             view->score -= SCORE_LOSS_VAMPIRE_MATURES;
          }
 
+         if (view->trail[currPlayer][0] == TELEPORT) {
+            view->HP[currPlayer] += LIFE_GAIN_CASTLE_DRACULA;
+         }
 
 
          if (view->trail[currPlayer][0] != NOWHERE) {
@@ -286,6 +289,9 @@ LocationID getLocation(GameView currentView, PlayerID player) {
       // x++;
    // }
 //   printf("%d , %d\n",player, x);
+   if (currentView->trail[player][0] == TELEPORT) {
+      return CASTLE_DRACULA;
+    }
    return currentView->trail[player][0]; //playerLocation[player];
 }
 
