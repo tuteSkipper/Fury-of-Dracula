@@ -2,3 +2,10 @@ Places.o
 Map.o
 GameView.o
 testGameView.o
+HunterView.o
+DracView.o
+HunterView.o
+Map.o
+Places.o
+testDracView.o
+testHunterView.o
