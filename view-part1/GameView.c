@@ -65,12 +65,12 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
       }
 
       currPlayer = getCurrentPlayer(view);
-      printf("out-> turn %d\n",(view->turnNumber));
+      //printf("out-> turn %d\n",(view->turnNumber));
       //printf("curr player %d\n",getCurrentPlayer(view));
 
       for (i = 0; i < TRAIL_SIZE; i++) { // put the move from the turn in the trail
          if (i < (TRAIL_SIZE-1)) {
-             printf("i: %d | ",i);
+             //printf("i: %d | ",i);
             view->trail[currPlayer][i] = view->trail[currPlayer][i+1];
          } else {
             char place[3];
@@ -184,7 +184,7 @@ Round getRound(GameView currentView)
 // Get the id of current player - ie whose turn is it?
 PlayerID getCurrentPlayer(GameView currentView) {
    PlayerID player = currentView->turnNumber % NUM_PLAYERS;
-   printf("->turn num: %d\n",currentView->turnNumber);
+   //printf("->turn num: %d\n",currentView->turnNumber);
    if(currentView->turnNumber == 0 || currentView->turnNumber == 1){
       player = PLAYER_LORD_GODALMING;
    } else if(player == 0){
@@ -211,17 +211,17 @@ int getHealth(GameView currentView, PlayerID player)
 LocationID getLocation(GameView currentView, PlayerID player) {
    int i=0,j=0;
    for (i=0; i < NUM_PLAYERS; i++) {
-      printf("player%d:",i);
+      //printf("player%d:",i);
       for (j = 0 ; j < TRAIL_SIZE ; j++) {
-         printf(" %d ",currentView->trail[i][j]);
+         //printf(" %d ",currentView->trail[i][j]);
       }
-      printf("\n");
+      //printf("\n");
    }
    int x=0;
    while (x < TRAIL_SIZE-1){
       x++;
    }
-   printf("%d , %d\n",player, x);
+//   printf("%d , %d\n",player, x);
    return currentView->trail[player][x]; //playerLocation[player];
 }
 
@@ -233,7 +233,7 @@ void getHistory(GameView currentView, PlayerID player, LocationID trail[TRAIL_SI
     int j;
     for (i =0, j = TRAIL_SIZE-1 ; i < TRAIL_SIZE; i++, j--) {
         trail[i] = currentView->trail[player][j];
-        printf("trail: %d\n",trail[i]);
+        //printf("trail: %d\n",trail[i]);
    }
 }
 

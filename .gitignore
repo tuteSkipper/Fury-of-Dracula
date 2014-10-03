@@ -9,3 +9,6 @@ Map.o
 Places.o
 testDracView.o
 testHunterView.o
+testDracView
+testHunterView
+testGameView

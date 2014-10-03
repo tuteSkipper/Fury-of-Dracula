@@ -179,10 +179,9 @@ int howHealthyIs(DracView currentView, PlayerID player)
 }
 
 // Get the current location id of a given player
-LocationID whereIs(DracView currentView, PlayerID player)
-{
-   //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-   return 0;
+LocationID whereIs(DracView currentView, PlayerID player) {
+
+   return currentView->trail[player][TRAIL_SIZE-1];;
 }
 
 // Get the most recent move of a given player
@@ -194,8 +193,7 @@ void lastMove(DracView currentView, PlayerID player,
 }
 
 // Find out what minions are placed at the specified location
-void whatsThere(DracView currentView, LocationID where,
-                   int *numTraps, int *numVamps)
+void whatsThere(DracView currentView, LocationID where, int *numTraps, int *numVamps)
 {
    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
    return;
@@ -204,10 +202,12 @@ void whatsThere(DracView currentView, LocationID where,
 //// Functions that return information about the history of the game
 
 // Fills the trail array with the location ids of the last 6 turns
-void giveMeTheTrail(DracView currentView, PlayerID player,
-                     LocationID trail[TRAIL_SIZE])
-{
-   //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+void giveMeTheTrail(DracView currentView, PlayerID player, LocationID trail[TRAIL_SIZE]){
+    int i;
+    int j;
+    for (i =0, j = TRAIL_SIZE-1 ; i < TRAIL_SIZE; i++, j--) {
+        trail[i] = currentView->trail[player][j];
+    }
 }
 
 //// Functions that query the map to find information about connectivity

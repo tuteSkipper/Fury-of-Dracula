@@ -215,8 +215,9 @@ LocationID whereIs(HunterView currentView, PlayerID player) {
 // Fills the trail array with the location ids of the last 6 turns
 void giveMeTheTrail(HunterView currentView, PlayerID player, LocationID trail[TRAIL_SIZE]) {
     int i;
-    for ( i = 0; i < TRAIL_SIZE; i++){
-        trail[i] = currentView->trail[player][i];
+    int j;
+    for (i =0, j = TRAIL_SIZE-1 ; i < TRAIL_SIZE; i++, j--) {
+        trail[i] = currentView->trail[player][j];
     }
 } //done
 
