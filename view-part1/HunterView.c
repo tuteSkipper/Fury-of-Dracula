@@ -99,7 +99,6 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
         if ((pastPlays[curr] == 'G')||(pastPlays[curr] == 'S')||
             (pastPlays[curr] == 'H')||(pastPlays[curr] == 'M')) {
             if (view->HP[playerID] <= 0) {
-                view->score -= SCORE_LOSS_HUNTER_HOSPITAL;
                 view->HP[playerID] = 9;
             }
             
@@ -112,6 +111,10 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
                     view->HP[playerID] -= LIFE_LOSS_DRACULA_ENCOUNTER;
                     printf("%d %d\n", playerID, view->HP[playerID]);
                     view->HP[PLAYER_DRACULA] -= LIFE_LOSS_HUNTER_ENCOUNTER;
+                }
+
+                if (view->HP[playerID] <= 0) {
+                  view->score -= SCORE_LOSS_HUNTER_HOSPITAL;
                 }
                     // yes??
                 // if (view->HP[playerID] <= 0) {

@@ -98,20 +98,23 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
       if ((pastPlays[curr] == 'G')||(pastPlays[curr] == 'S')||
          (pastPlays[curr] == 'H')||(pastPlays[curr] == 'M')) {
          if (view->HP[currPlayer] <= 0) {
-            view->score -= SCORE_LOSS_HUNTER_HOSPITAL;
-            view->HP[currPlayer] = 9;
-         }
-
-         for (i = (curr+3); i < (curr+7); i++) {
-            if (pastPlays[i] == 'T') {
-               view->HP[currPlayer] -= LIFE_LOSS_TRAP_ENCOUNTER;
-            } else if (pastPlays[i] == 'V') {
-               // no life lost, vampire vanquished
-            } else if (pastPlays[i] == 'D') {
-               view->HP[currPlayer] -= LIFE_LOSS_DRACULA_ENCOUNTER;
-               printf("%d %d\n", currPlayer, view->HP[currPlayer]);
-               view->HP[PLAYER_DRACULA] -= LIFE_LOSS_HUNTER_ENCOUNTER;
+                view->HP[currPlayer] = 9;
             }
+            
+         for (i = (curr+3); i < (curr+7); i++) {
+             if (pastPlays[i] == 'T') {
+                 view->HP[currPlayer] -= LIFE_LOSS_TRAP_ENCOUNTER;
+             } else if (pastPlays[i] == 'V') {
+                 // no life lost, vampire vanquished
+             } else if (pastPlays[i] == 'D') {
+                 view->HP[currPlayer] -= LIFE_LOSS_DRACULA_ENCOUNTER;
+                 printf("%d %d\n", currPlayer, view->HP[currPlayer]);
+                 view->HP[PLAYER_DRACULA] -= LIFE_LOSS_HUNTER_ENCOUNTER;
+             }
+
+             if (view->HP[currPlayer] <= 0) {
+               view->score -= SCORE_LOSS_HUNTER_HOSPITAL;
+             }
 
             // if (view->HP[(view->turnNumber)%5] <= 0) { //HUNTERVIEW?
                // view->trail
