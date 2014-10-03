@@ -1,6 +1,7 @@
 // DracView.c ... DracView ADT implementation
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <assert.h>
 #include <string.h>
 
@@ -72,35 +73,37 @@ DracView newDracView(char *pastPlays, PlayerMessage messages[])
          currPlayer -= 1;
       }
 
-      for (i = 0; i < TRAIL_SIZE; i++) { // put the move from the turn in the trail
-         if (i < (TRAIL_SIZE-1)) {
-            view->trail[currPlayer][i] = view->trail[currPlayer][i+1];
+      for (i = TRAIL_SIZE-1; i >= 0; i--) { // put the move from the turn in the trail
+         // printf("%d\n", currPlayer);
+         if (i > 0) {
+            view->trail[currPlayer][i] = view->trail[currPlayer][i-1];
          } else {
             char place[3];
-             place[0] = pastPlays[curr+1];
-             place[1] = pastPlays[curr+2];
-             place[2] = '\0';
-             if (strcmp(place, "C?") == 0) {
-                 view->trail[currPlayer][i] = CITY_UNKNOWN;
-             } else if (strcmp(place, "S?") == 0) {
-                 view->trail[currPlayer][i] = SEA_UNKNOWN;
-             } else if (strcmp(place, "HI") == 0) {
-                 view->trail[currPlayer][i] = HIDE;
-             } else if (strcmp(place, "D1") == 0) {
-                 view->trail[currPlayer][i] = DOUBLE_BACK_1;
-             } else if (strcmp(place, "D2") == 0) {
-                 view->trail[currPlayer][i] = DOUBLE_BACK_2;
-             } else if (strcmp(place, "D3") == 0) {
-                 view->trail[currPlayer][i] = DOUBLE_BACK_3;
-             } else if (strcmp(place, "D4") == 0) {
-                 view->trail[currPlayer][i] = DOUBLE_BACK_4;
-             } else if (strcmp(place, "D5") == 0) {
-                 view->trail[currPlayer][i] = DOUBLE_BACK_5;
-             } else if (strcmp(place, "TP") == 0) {
-                 view->trail[currPlayer][i] = CITY_UNKNOWN;
-             } else {
-                 view->trail[currPlayer][i] = abbrevToID(place);
-             }
+            place[0] = pastPlays[curr+1];
+            place[1] = pastPlays[curr+2];
+            place[2] = '\0';
+            if (strcmp(place, "C?") == 0) {
+               view->trail[currPlayer][i] = CITY_UNKNOWN;
+            } else if (strcmp(place, "S?") == 0) {
+               view->trail[currPlayer][i] = SEA_UNKNOWN;
+            } else if (strcmp(place, "HI") == 0) {
+               view->trail[currPlayer][i] = HIDE;
+            } else if (strcmp(place, "D1") == 0) {
+               view->trail[currPlayer][i] = DOUBLE_BACK_1;
+            } else if (strcmp(place, "D2") == 0) {
+               view->trail[currPlayer][i] = DOUBLE_BACK_2;
+            } else if (strcmp(place, "D3") == 0) {
+               view->trail[currPlayer][i] = DOUBLE_BACK_3;
+            } else if (strcmp(place, "D4") == 0) {
+               view->trail[currPlayer][i] = DOUBLE_BACK_4;
+            } else if (strcmp(place, "D5") == 0) {
+               view->trail[currPlayer][i] = DOUBLE_BACK_5;
+            } else if (strcmp(place, "TP") == 0) {
+               view->trail[currPlayer][i] = CITY_UNKNOWN;
+            } else {
+               printf("%s\n", place);
+               view->trail[currPlayer][i] = abbrevToID(place);
+            }
          }
       }
 
