@@ -18,6 +18,7 @@ struct hunterView {
     int HP[NUM_PLAYERS];                  // players' health points
     int trail[NUM_PLAYERS][TRAIL_SIZE];   // players' trails
     Map m;
+    GameView g;
 };
      
 
@@ -49,7 +50,8 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
     }
     
     view->m = newMap();
-    
+    view->g = newGameView(pastPlays, messages);
+
     int researchRecord[NUM_PLAYERS-1] = {0};
     int curr = 0;
     while (pastPlays[curr] != '\0') {

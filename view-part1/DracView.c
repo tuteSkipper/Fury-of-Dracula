@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
+
 #include "Globals.h"
 #include "Game.h"
 #include "GameView.h"
@@ -16,6 +17,7 @@ struct dracView {
    int HP[NUM_PLAYERS];                  // players' health points
    int trail[NUM_PLAYERS][TRAIL_SIZE];   // players' trails
    Map m;
+   GameView g;
 };
 
 
@@ -44,6 +46,7 @@ DracView newDracView(char *pastPlays, PlayerMessage messages[])
    }
    
    view->m = newMap();
+   view->g = newGameView(pastPlays, messages);
 
    int researchRecord[NUM_PLAYERS-1] = {0};
    int curr = 0;
