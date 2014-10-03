@@ -27,7 +27,7 @@ struct hunterView {
 HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
     HunterView view = malloc(sizeof(struct hunterView));
     
-    view->roundNumber = -1;
+    view->roundNumber = 0;
     view->turnNumber = 0;
     view->score = GAME_START_SCORE;
     
@@ -60,14 +60,19 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
             curr++; // to bring it to the correct character
         }
         view->turnNumber++;
+        if (view->turnNumber % NUM_PLAYERS == PLAYER_DRACULA) {
+            view->turnNumber++;
+        }
+        
         if (pastPlays[curr] == 'G') { // update round number
             view->roundNumber++;
+            //printf ("roundNumber is %d\n", view->roundNumber);
             if (view->roundNumber > 0) {
                 view->score--; // decrease score after Dracula's turn
             }
         }
         playerID = whoAmI(view);
-        printf ("playerID is %d\n", playerID);
+        //printf ("playerID is %d\n", playerID);
         
         for (i = 0; i < TRAIL_SIZE; i++) { // put the move from the turn in the trail
             if (i < (TRAIL_SIZE-1)) {
@@ -162,10 +167,6 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
         curr += 7;     // gets to the space or NULL if no more plays
     }
     
-    if (view->roundNumber == -1) {
-        view->roundNumber++;
-    }
-    
     return view;
 }
 
@@ -213,8 +214,7 @@ int howHealthyIs(HunterView currentView, PlayerID player) {
 // Get the current location id of a given player
 LocationID whereIs(HunterView currentView, PlayerID player) {
     // need to adjust for trail array
-    
-    return currentView->trail[player][TRAIL_SIZE-1];
+    return currentView->trail[player][0];
 }
 
 //// Functions that return information about the history of the game
