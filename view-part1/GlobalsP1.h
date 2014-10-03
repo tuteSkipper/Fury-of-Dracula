@@ -10,14 +10,7 @@
 #define FALSE 0
 #define TRUE 1
 
-// Globals
-typedef int Round;
-
-#define TRAIL_SIZE 6
-
 // Players
-typedef int PlayerID;
-
 #define PLAYER_LORD_GODALMING   0
 #define PLAYER_DR_SEWARD        1
 #define PLAYER_VAN_HELSING      2
@@ -25,6 +18,8 @@ typedef int PlayerID;
 #define PLAYER_DRACULA          4
 
 #define NUM_PLAYERS     5
+
+#define TRAIL_SIZE 6
 
 // Score
 #define GAME_START_SCORE                366

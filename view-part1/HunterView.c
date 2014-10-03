@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 
 #include "Globals.h"
 #include "Game.h"
@@ -22,30 +23,32 @@ struct hunterView {
 
 // Creates a new HunterView to summarise the current state of the game
 HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
-    HunterView hunterView = malloc(sizeof(struct hunterView));
+    HunterView view = malloc(sizeof(struct hunterView));
     
-    hunterView->roundNumber = -1;
-    hunterView->turnNumber = -1;
-    hunterView->score = GAME_START_SCORE;
+    view->roundNumber = -1;
+    view->turnNumber = -1;
+    view->score = GAME_START_SCORE;
     
     PlayerID playerID;
-    
-    for (int i = 0; i < NUM_PLAYERS; i++) {
+
+    int i;
+    for (i = 0; i < NUM_PLAYERS; i++) {
         if (i < PLAYER_DRACULA) {
-            hunterView->HP[i] = GAME_START_HUNTER_LIFE_POINTS;
+            view->HP[i] = GAME_START_HUNTER_LIFE_POINTS;
         } else {
-            hunterView->HP[i] = GAME_START_BLOOD_POINTS;    
+            view->HP[i] = GAME_START_BLOOD_POINTS;    
         }
     }    
     
+    int j;
     // can't reveal Dracula trail to hunters ?
     for (i = 0; i < NUM_PLAYERS; i++) {
-        for (int j = 0; j < TRAIL_SIZE; j++) {
-            hunterView->trail[i][j] = NOWHERE;
+        for (j = 0; j < TRAIL_SIZE; j++) {
+            view->trail[i][j] = NOWHERE;
         }
     }
     
-    hunterView->m = newMap();
+    view->m = newMap();
     
     int researchRecord[NUM_PLAYERS-1] = {0};
     int curr = 0;
@@ -53,18 +56,18 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
         if (curr > 0) {
             curr++; // to bring it to the correct character
         }
-        hunterView->turnNumber++;
+        view->turnNumber++;
         if (pastPlays[curr] == 'G') { // update round number
-            hunterView->roundNumber++;
-            if (hunterView->roundNumber > 0) {
-                hunterView->score--; // decrease score after Dracula's turn
+            view->roundNumber++;
+            if (view->roundNumber > 0) {
+                view->score--; // decrease score after Dracula's turn
             }
         }
-        playerID = getCurrentPlayer(view);
+        playerID = whoAmI(view);
         
         for (i = 0; i < TRAIL_SIZE; i++) { // put the move from the turn in the trail
             if (i < (TRAIL_SIZE-1)) {
-                hunterView->trail[playerID][i] = hunterView->trail[playerID][i+1];
+                view->trail[playerID][i] = view->trail[playerID][i+1];
             } else {
                 char place[3];
                 place[0] = pastPlays[curr+1];
@@ -96,29 +99,29 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
         
         if ((pastPlays[curr] == 'G')||(pastPlays[curr] == 'S')||
             (pastPlays[curr] == 'H')||(pastPlays[curr] == 'M')) {
-            if (hunterView->HP[playerID] <= 0) {
-                hunterView->score -= SCORE_LOSS_HUNTER_HOSPITAL;
-                hunterView->HP[playerID] = 9;
+            if (view->HP[playerID] <= 0) {
+                view->score -= SCORE_LOSS_HUNTER_HOSPITAL;
+                view->HP[playerID] = 9;
             }
             
             for (i = (curr+3); i < (curr+7); i++) {
                 if (pastPlays[i] == 'T') {
-                    hunterView->HP[playerID] -= LIFE_LOSS_TRAP_ENCOUNTER;
+                    view->HP[playerID] -= LIFE_LOSS_TRAP_ENCOUNTER;
                 } else if (pastPlays[i] == 'V') {
                     // no life lost, vampire vanquished
                 } else if (pastPlays[i] == 'D') {
-                    hunterView->HP[playerID] -= LIFE_LOSS_DRACULA_ENCOUNTER;
-                    hunterView->HP[PLAYER_DRACULA] -= LIFE_LOSS_HUNTER_ENCOUNTER;
+                    view->HP[playerID] -= LIFE_LOSS_DRACULA_ENCOUNTER;
+                    view->HP[PLAYER_DRACULA] -= LIFE_LOSS_HUNTER_ENCOUNTER;
                 }
                     // yes??
-                if (hunterView->HP[playerID] <= 0) {
-                    hunterView->trail[playerID][TRAIL_SIZE-1] = ST_JOSEPH_AND_ST_MARYS;
+                if (view->HP[playerID] <= 0) {
+                    view->trail[playerID][TRAIL_SIZE-1] = ST_JOSEPH_AND_ST_MARYS;
                 }
             }
             
-            // for (i = 0; i < TRAIL_SIZE; i++) { //THIS PROBABLY GOES IN HUNTERhunterView
+            // for (i = 0; i < TRAIL_SIZE; i++) { //THIS PROBABLY GOES IN HUNTERview
             // if (i < (TRAIL_SIZE-1)) { // check if hunter's stumbled on Drac's trail
-            // if (hunterView->trail[playerID][TRAIL_SIZE-1] == hunterView->trail[PLAYER_DRACULA][i]) {
+            // if (view->trail[playerID][TRAIL_SIZE-1] == view->trail[PLAYER_DRACULA][i]) {
             
             // }
             // } else {
@@ -126,13 +129,13 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
             // }
             // }
             
-            if (hunterView->trail[playerID][TRAIL_SIZE-1] == hunterView->trail[playerID][TRAIL_SIZE-2]) { // same place as last round
+            if (view->trail[playerID][TRAIL_SIZE-1] == view->trail[playerID][TRAIL_SIZE-2]) { // same place as last round
                 if (researchRecord[playerID] == 0) {
                     researchRecord[playerID]++;
                 }
-                hunterView->HP[playerID] += 3;
-                if (hunterView->HP[playerID] > 9) {
-                    hunterView->HP[playerID] = 9;
+                view->HP[playerID] += 3;
+                if (view->HP[playerID] > 9) {
+                    view->HP[playerID] = 9;
                 }
             } else if (researchRecord[playerID] == 1) { // resting on more than one turn can't count towards research
                 researchRecord[playerID]--;
@@ -141,12 +144,13 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
             if ((researchRecord[PLAYER_LORD_GODALMING] == 1)&&(researchRecord[PLAYER_DR_SEWARD] == 1)&&
                 (researchRecord[PLAYER_VAN_HELSING] == 1)&&(researchRecord[PLAYER_MINA_HARKER] == 1)) {
                 // all hunters have not moved for one go and researches
-                int research = hunterView->trail[PLAYER_DRACULA][0]; // should this be an aspect of the hunterView struct or a static function????
+                int research = view->trail[PLAYER_DRACULA][0]; // should this be an aspect of the view struct or a static function????
+                research = research; // to make it compile
             }
             
         } else  { // Dracula's turn
             if (pastPlays[curr+6] == 'V') {
-                hunterView->score -= SCORE_LOSS_VAMPIRE_MATURES;
+                view->score -= SCORE_LOSS_VAMPIRE_MATURES;
             }
         } // Not needed in HunterView
           // ^ Needed for score, though???
@@ -154,7 +158,7 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
         curr += 7;     // gets to the space or NULL if no more plays
     }
     
-    return hunterView;
+    return view;
 }
 
 
@@ -192,7 +196,7 @@ int howHealthyIs(HunterView currentView, PlayerID player) {
 LocationID whereIs(HunterView currentView, PlayerID player) {
     // need to adjust for trail array
     
-    return currentView->currentPlayerLocation[player];
+    return currentView->trail[player][TRAIL_SIZE-1];
 }
 
 //// Functions that return information about the history of the game
@@ -201,7 +205,7 @@ LocationID whereIs(HunterView currentView, PlayerID player) {
 void giveMeTheTrail(HunterView currentView, PlayerID player, LocationID trail[TRAIL_SIZE]) {
     int i;
     for ( i = 0; i < TRAIL_SIZE; i++){
-        trail[i] = currentView->currentTrailHistory[player][i];
+        trail[i] = currentView->trail[player][i];
     }
 } //done
 

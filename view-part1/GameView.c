@@ -30,7 +30,8 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
 
    PlayerID currPlayer;
 
-   for (int i = 0; i < NUM_PLAYERS; i++) {
+   int i;
+   for (i = 0; i < NUM_PLAYERS; i++) {
       if (i < PLAYER_DRACULA) {
          view->HP[i] = GAME_START_HUNTER_LIFE_POINTS;
          //view->playerLocation[i] = UNKNOWN_LOCATION;
@@ -40,8 +41,9 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
       }
    }
 
-   for (int i = 0; i < NUM_PLAYERS; i++) {
-      for (int j = 0; j < TRAIL_SIZE; j++) {
+   int j;
+   for (i = 0; i < NUM_PLAYERS; i++) {
+      for (j = 0; j < TRAIL_SIZE; j++) {
          view->trail[i][j] = NOWHERE;
       }
    }
@@ -66,7 +68,7 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
       printf("out-> turn %d\n",(view->turnNumber));
       //printf("curr player %d\n",getCurrentPlayer(view));
 
-      for (int i = 0; i < TRAIL_SIZE; i++) { // put the move from the turn in the trail
+      for (i = 0; i < TRAIL_SIZE; i++) { // put the move from the turn in the trail
          if (i < (TRAIL_SIZE-1)) {
              printf("i: %d | ",i);
             view->trail[currPlayer][i] = view->trail[currPlayer][i+1];
@@ -106,7 +108,7 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
             view->HP[currPlayer] = 9;
          }
 
-         for (int i = (curr+3); i < (curr+7); i++) {
+         for (i = (curr+3); i < (curr+7); i++) {
             if (pastPlays[i] == 'T') {
                view->HP[currPlayer] -= LIFE_LOSS_TRAP_ENCOUNTER;
             } else if (pastPlays[i] == 'V') {

@@ -11,6 +11,9 @@
 
 typedef struct gameView *GameView;
 
+typedef int PlayerID;
+typedef int Round;
+
 // newGameView() creates a new game view to summarise the current state of
 // the game.
 //
