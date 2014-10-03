@@ -64,7 +64,7 @@ DracView newDracView(char *pastPlays, PlayerMessage messages[])
       }
 
       PlayerID currPlayer = view->turnNumber % NUM_PLAYERS;
-      //printf("->turn num: %d\n",currentView->turnNumber);
+      printf("->turn num: %d\n", view->turnNumber);
       if(view->turnNumber == 0 || view->turnNumber == 1){
          currPlayer = PLAYER_LORD_GODALMING;
       } else if(currPlayer == 0){
@@ -101,8 +101,9 @@ DracView newDracView(char *pastPlays, PlayerMessage messages[])
             } else if (strcmp(place, "TP") == 0) {
                view->trail[currPlayer][i] = CITY_UNKNOWN;
             } else {
-               printf("%s\n", place);
+               printf("%d %s %d\n", i, place, currPlayer);
                view->trail[currPlayer][i] = abbrevToID(place);
+               printf("%d\n", view->trail[currPlayer][i]);
             }
          }
       }
