@@ -198,24 +198,25 @@ void giveMeTheTrail(DracView currentView, PlayerID player,
 //// Functions that query the map to find information about connectivity
 
 // What are my (Dracula's) possible next moves (locations)
-LocationID *whereCanIgo(DracView currentView, int *numLocations, int road, int sea)
+LocationID *whereCanIgo(DracView currentView, int *numLocations, int road, int rail, int sea)
 {
-   //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-   LocationID *locations[numLocations];
-   LocationID = currLocation = whereIs(currentView, PLAYER_DRACULA);
-   locations = *connectedLocations(currentView, *numLocations, currLocation,
-                                    PLAYER_DRACULA, currentView->roundNumber, TRUE, FALSE, TRUE);
-   return locations;
+    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+    LocationID *locations = malloc(NUM_MAP_LOCATIONS*sizeof(int));
+    LocationID currLocation = whereIs(currentView, PLAYER_DRACULA);
+    locations = connectedLocations(currentView->g, numLocations, currLocation,
+                                    PLAYER_DRACULA, currentView->roundNumber, road, rail, sea);
+    return locations;
 }
-
+                               
 // What are the specified player's next possible moves
 LocationID *whereCanTheyGo(DracView currentView, int *numLocations,
-                     PlayerID player, int road, int rail, int sea)
+                            PlayerID player, int road, int rail, int sea)
 {
-   //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-   LocationID *locations[numLocations];
-   LocationID = currLocation = whereIs(currentView, player);
-   locations = *connectedLocations(currentView, *numLocations, currLocation,
-                                    player, currentView->roundNumber, TRUE, TRUE, TRUE);
-   return locations;
+    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+    LocationID *locations = malloc(NUM_MAP_LOCATIONS*sizeof(int));
+    LocationID currLocation = whereIs(currentView, player);
+    locations = connectedLocations(currentView->g, numLocations, currLocation,
+                                    player, currentView->roundNumber, road, rail, sea);
+    return locations;
 }
+
