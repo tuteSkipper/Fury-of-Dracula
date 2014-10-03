@@ -187,7 +187,6 @@ PlayerID getCurrentPlayer(GameView currentView) {
    printf("->turn num: %d\n",currentView->turnNumber);
    if(currentView->turnNumber == 0 || currentView->turnNumber == 1){
       player = PLAYER_LORD_GODALMING;
-      return player;
    } else if(player == 0){
       player = PLAYER_DRACULA;
    } else {

@@ -143,12 +143,12 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
                 researchRecord[playerID]--;
             }
             
-            if ((researchRecord[PLAYER_LORD_GODALMING] == 1)&&(researchRecord[PLAYER_DR_SEWARD] == 1)&&
-                (researchRecord[PLAYER_VAN_HELSING] == 1)&&(researchRecord[PLAYER_MINA_HARKER] == 1)) {
+            // if ((researchRecord[PLAYER_LORD_GODALMING] == 1)&&(researchRecord[PLAYER_DR_SEWARD] == 1)&&
+                // (researchRecord[PLAYER_VAN_HELSING] == 1)&&(researchRecord[PLAYER_MINA_HARKER] == 1)) {
                 // all hunters have not moved for one go and researches
-                int research = view->trail[PLAYER_DRACULA][0]; // should this be an aspect of the view struct or a static function????
-                research = research; // to make it compile
-            }
+                // int research = view->trail[PLAYER_DRACULA][0]; // should this be an aspect of the view struct or a static function????
+                // research = research; // to make it compile
+            // }
             
         } else  { // Dracula's turn
             if (pastPlays[curr+6] == 'V') {
