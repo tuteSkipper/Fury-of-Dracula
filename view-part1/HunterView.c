@@ -162,8 +162,14 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
                 view->score -= SCORE_LOSS_VAMPIRE_MATURES;
             }
 
-            if (idToType(view->trail[playerID][0]) == 2) {
-               view->HP[playerID] -= LIFE_LOSS_SEA;
+            if (view->trail[playerID][0] != NOWHERE) {
+               if (view->trail[playerID][0] < NUM_MAP_LOCATIONS) {
+                  if (idToType(view->trail[playerID][0]) == 2) {
+                     view->HP[playerID] -= LIFE_LOSS_SEA;
+                  }
+               } else if (view->trail[playerID][0] == SEA_UNKNOWN) {
+                  view->HP[playerID] -= LIFE_LOSS_SEA;
+               }
             }
         } // Not needed in HunterView
           // ^ Needed for score, though???
