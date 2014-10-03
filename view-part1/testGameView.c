@@ -29,8 +29,8 @@ int main()
     PlayerMessage messages2[] = {"Hello","Rubbish","Stuff","","Mwahahah"};
     gv = newGameView("GST.... SAO.... HZU.... MBB.... DC?....", messages2);
     printf("!!current player: %d\n", getCurrentPlayer(gv));
-    //assert(getCurrentPlayer(gv) == PLAYER_LORD_GODALMING);//wrong? still PLAYER_DRACULA turn
-    assert(getCurrentPlayer(gv) == PLAYER_DRACULA);
+    assert(getCurrentPlayer(gv) == PLAYER_LORD_GODALMING);//wrong? still PLAYER_DRACULA turn
+    // assert(getCurrentPlayer(gv) == PLAYER_DRACULA);
     //assert(getRound(gv) == 1);
     printf("current player: %d\n", getCurrentPlayer(gv));
     assert(getLocation(gv,PLAYER_LORD_GODALMING) == STRASBOURG);

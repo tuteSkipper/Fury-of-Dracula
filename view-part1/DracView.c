@@ -26,8 +26,8 @@ struct dracView {
 DracView newDracView(char *pastPlays, PlayerMessage messages[])
 {
    DracView view = malloc(sizeof(struct dracView));
-   view->roundNumber = -1;
-   view->turnNumber = 0;
+   view->roundNumber = 0;
+   view->turnNumber = 1;
    view->score = GAME_START_SCORE;
 
    int i;
@@ -54,13 +54,6 @@ DracView newDracView(char *pastPlays, PlayerMessage messages[])
    while (pastPlays[curr] != '\0') {
       if (curr > 0) {
          curr++; // to bring it to the correct character
-      }
-      view->turnNumber++;
-      if (pastPlays[curr] == 'G') { // update round number
-         view->roundNumber++;
-         if (view->roundNumber > 0) {
-            view->score--; // decrease score after Dracula's turn
-         }
       }
 
       PlayerID currPlayer = view->turnNumber % NUM_PLAYERS;
@@ -204,6 +197,12 @@ DracView newDracView(char *pastPlays, PlayerMessage messages[])
                }
             }
          }
+      }
+
+      view->turnNumber++;
+      if (pastPlays[curr] == 'D') { // update round number
+         view->roundNumber++;
+         view->score--; // decrease score after Dracula's turn
       }
 
       curr += 7;     // gets to the space or NULL if no more plays

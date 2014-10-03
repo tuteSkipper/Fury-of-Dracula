@@ -24,8 +24,8 @@ struct gameView {
 GameView newGameView(char *pastPlays, PlayerMessage messages[])
 {
    GameView view = malloc(sizeof(struct gameView));
-   view->roundNumber = -1;
-   view->turnNumber = 0;
+   view->roundNumber = 0;
+   view->turnNumber = 1;
    view->score = GAME_START_SCORE;
 
    PlayerID currPlayer;
@@ -56,13 +56,7 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
       if (curr > 0) {
          curr++; // to bring it to the correct character
       }
-      view->turnNumber++;
-      if (pastPlays[curr] == 'G') { // update round number
-         view->roundNumber++;
-         if (view->roundNumber > 0) {
-            view->score--; // decrease score after Dracula's turn
-         }
-      }
+      
 
       currPlayer = getCurrentPlayer(view);
       //printf("out-> turn %d\n",(view->turnNumber));
@@ -221,6 +215,12 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[])
                }
             }
          }
+      }
+
+      view->turnNumber++;
+      if (pastPlays[curr] == 'D') { // update round number
+         view->roundNumber++;
+         view->score--; // decrease score after Dracula's turn
       }
 
       curr += 7;     // gets to the space or NULL if no more plays

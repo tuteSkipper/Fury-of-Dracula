@@ -28,7 +28,7 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
     HunterView view = malloc(sizeof(struct hunterView));
     
     view->roundNumber = 0;
-    view->turnNumber = 0;
+    view->turnNumber = 1;
     view->score = GAME_START_SCORE;
     
     PlayerID playerID;
@@ -59,18 +59,7 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
         if (curr > 0) {
             curr++; // to bring it to the correct character
         }
-        view->turnNumber++;
-        if (view->turnNumber % NUM_PLAYERS == PLAYER_DRACULA) {
-            view->turnNumber++;
-        }
         
-        if (pastPlays[curr] == 'G') { // update round number
-            view->roundNumber++;
-            //printf ("roundNumber is %d\n", view->roundNumber);
-            if (view->roundNumber > 0) {
-                view->score--; // decrease score after Dracula's turn
-            }
-        }
         playerID = whoAmI(view);
         //printf ("playerID is %d\n", playerID);
         
@@ -121,12 +110,13 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
                     // no life lost, vampire vanquished
                 } else if (pastPlays[i] == 'D') {
                     view->HP[playerID] -= LIFE_LOSS_DRACULA_ENCOUNTER;
+                    printf("%d %d\n", playerID, view->HP[playerID]);
                     view->HP[PLAYER_DRACULA] -= LIFE_LOSS_HUNTER_ENCOUNTER;
                 }
                     // yes??
-                if (view->HP[playerID] <= 0) {
-                    view->trail[playerID][TRAIL_SIZE-1] = ST_JOSEPH_AND_ST_MARYS;
-                }
+                // if (view->HP[playerID] <= 0) {
+                    // view->trail[playerID][TRAIL_SIZE-1] = ST_JOSEPH_AND_ST_MARYS;
+                // }
             }
             
             // for (i = 0; i < TRAIL_SIZE; i++) { //THIS PROBABLY GOES IN HUNTERview
@@ -157,6 +147,19 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
                 // int research = view->trail[PLAYER_DRACULA][0]; // should this be an aspect of the view struct or a static function????
                 // research = research; // to make it compile
             // }
+
+            if (view->trail[playerID][0] == view->trail[playerID][1]) { // same place as last round
+               if (researchRecord[playerID] == 0) {
+                  researchRecord[playerID]++;
+               }
+               view->HP[playerID] += 3;
+               printf("dsjaod: %d %d\n", playerID, view->HP[playerID]);
+               while (view->HP[playerID] > 9) {
+                  view->HP[playerID]--;
+               }
+            } else if (researchRecord[playerID] == 1) {
+               researchRecord[playerID]--;
+            }
             
         } else  { // Dracula's turn
             if (pastPlays[curr+6] == 'V') {
@@ -224,7 +227,13 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
             }
         } // Not needed in HunterView
           // ^ Needed for score, though???
-        
+      
+      view->turnNumber++;
+      if (pastPlays[curr] == 'D') { // update round number
+         view->roundNumber++;
+         view->score--; // decrease score after Dracula's turn
+      }
+
         curr += 7;     // gets to the space or NULL if no more plays
     }
     
@@ -284,7 +293,7 @@ LocationID whereIs(HunterView currentView, PlayerID player) {
 void giveMeTheTrail(HunterView currentView, PlayerID player, LocationID trail[TRAIL_SIZE]) {
     int i;
     int j;
-    for (i =0, j = TRAIL_SIZE-1 ; i < TRAIL_SIZE; i++, j--) {
+    for (i =0, j = 0; i < TRAIL_SIZE; i++, j++) {
         trail[i] = currentView->trail[player][j];
     }
 } //done
