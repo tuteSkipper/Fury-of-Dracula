@@ -17,6 +17,7 @@ struct dracView {
    int score;                            // current score
    int HP[NUM_PLAYERS];                  // players' health points
    int trail[NUM_PLAYERS][TRAIL_SIZE];   // players' trails
+   int whatIsThere[NUM_MAP_LOCATIONS][2];
    Map m;
    GameView g;
 };
@@ -260,11 +261,16 @@ void lastMove(DracView currentView, PlayerID player,
 }
 
 // Find out what minions are placed at the specified location
-void whatsThere(DracView currentView, LocationID where, int *numTraps, int *numVamps)
-{
-   currentView->m; 
-   
-   return;
+void whatsThere(DracView currentView, LocationID where, int *numTraps, int *numVamps){
+
+   //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+    if (idToType(where) == SEA || idToType(where) == NOWHERE){
+        numTraps = 0;
+        numVamps = 0;
+    } else {
+        numTraps = currentView->whatIsThere[where][0];
+        numVamps = currentView->whatIsThere[where][1];
+    }
 }
 
 //// Functions that return information about the history of the game
