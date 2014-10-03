@@ -128,19 +128,7 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
             
             // }
             // }
-            
-            if (view->trail[playerID][TRAIL_SIZE-1] == view->trail[playerID][TRAIL_SIZE-2]) { // same place as last round
-                if (researchRecord[playerID] == 0) {
-                    researchRecord[playerID]++;
-                }
-                view->HP[playerID] += 3;
-                if (view->HP[playerID] > 9) {
-                    view->HP[playerID] = 9;
-                }
-            } else if (researchRecord[playerID] == 1) { // resting on more than one turn can't count towards research
-                researchRecord[playerID]--;
-            }
-            
+         
             // if ((researchRecord[PLAYER_LORD_GODALMING] == 1)&&(researchRecord[PLAYER_DR_SEWARD] == 1)&&
                 // (researchRecord[PLAYER_VAN_HELSING] == 1)&&(researchRecord[PLAYER_MINA_HARKER] == 1)) {
                 // all hunters have not moved for one go and researches
