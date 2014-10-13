@@ -140,10 +140,10 @@ DracView newDracView(char *pastPlays, PlayerMessage messages[])
             }
             
         } else  { // Dracula's turn
-            if (pastPlays[curr] == 'T') {
+            if (pastPlays[curr+3] == 'T') {
                 view->whatIsThere[whereIs(view,currPlayer)][0]++; //update the current location of trap
             }
-            if (pastPlays[curr] == 'V') {
+            if (pastPlays[curr+4] == 'V') {
                 view->whatIsThere[whereIs(view,currPlayer)][1]++; //update the current location of vamp
             }
             
@@ -284,11 +284,11 @@ void whatsThere(DracView currentView, LocationID where, int *numTraps, int *numV
     
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     if (idToType(where) == SEA || idToType(where) == NOWHERE){
-        numTraps[0] = 0;
-        numVamps[0] = 0;
+        numTraps = 0;
+        numVamps = 0;
     } else {
-        numTraps = &currentView->whatIsThere[where][0];
-        numVamps = &currentView->whatIsThere[where][1];
+        *numTraps = currentView->whatIsThere[where][0];
+        *numVamps = currentView->whatIsThere[where][1];
     }
 }
 

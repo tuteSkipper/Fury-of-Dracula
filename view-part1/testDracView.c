@@ -56,6 +56,7 @@ int main()
                      "GST.... SST.... HST.... MST....", messages3);
     int nT, nV;
     whatsThere(dv,EDINBURGH,&nT,&nV);
+    printf("nT %d, nV %d\n", nT,nV);
     assert(nT == 0 && nV == 1);
     whatsThere(dv,MANCHESTER,&nT,&nV);
     assert(nT == 1 && nV == 0);
