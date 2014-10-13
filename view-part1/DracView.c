@@ -275,11 +275,11 @@ void whatsThere(DracView currentView, LocationID where, int *numTraps, int *numV
 
    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     if (idToType(where) == SEA || idToType(where) == NOWHERE){
-        numTraps = 0;
-        numVamps = 0;
+        numTraps[0] = 0;
+        numVamps[0] = 0;
     } else {
-        numTraps = currentView->whatIsThere[where][0];
-        numVamps = currentView->whatIsThere[where][1];
+        numTraps[0] = currentView->whatIsThere[where][0];
+        numVamps[0] = currentView->whatIsThere[where][1];
     }
 }
 
