@@ -31,7 +31,7 @@ void decideHunterMove(HunterView gameState) {
             bestPlay = "SR";
         } else {
             LocationID current = whereIs(gameState, id);
-            int *numLocations;
+            int *numLocations = NULL;
             LocationID *connections = whereCanTheyGo(gameState, numLocations, id, TRUE, TRUE, TRUE);
             int counter = 0;
             LocationID next = NUM_MAP_LOCATIONS;
@@ -56,7 +56,7 @@ void decideHunterMove(HunterView gameState) {
             bestPlay = "HA";
         } else {
             LocationID current = whereIs(gameState, id);
-            int *numLocations;
+            int *numLocations = NULL;
             LocationID *connections = whereCanTheyGo(gameState, numLocations, id, TRUE, TRUE, TRUE);
             int counter = 0;
             LocationID next = UNKNOWN_LOCATION;
@@ -81,7 +81,7 @@ void decideHunterMove(HunterView gameState) {
             bestPlay = "VE";
         } else {
             LocationID current = whereIs(gameState, id);
-            int *numLocations;
+            int *numLocations = NULL;
             LocationID *connections = whereCanTheyGo(gameState, numLocations, id, TRUE, TRUE, TRUE);
             int counter = 0;
             LocationID next = UNKNOWN_LOCATION;
