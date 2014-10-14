@@ -7,7 +7,7 @@
 #include "Game.h"
 #include "DracView.h"
 
-srand(time(NULL));
+
 
 void decideDraculaMove(DracView gameState)
 {
@@ -15,12 +15,13 @@ void decideDraculaMove(DracView gameState)
 	// Replace the line below by something better
     
     // Random going to random place
+    srand(time(NULL));
     
     //Get all location
     LocationID allPlaces[NUM_MAP_LOCATIONS];
     int i;
     for (i = 0; i < NUM_MAP_LOCATIONS; i++) {
-        allPlaces[NUM_MAP_LOCATIONS] = i;
+        allPlaces[i] = i;
     }
     
     //going to a random place at the start 
@@ -38,7 +39,7 @@ void decideDraculaMove(DracView gameState)
         //Location *whereToGo = whereCanIgo(gameState, ,TRUE, FALSE);
     }
     
-    if (howHealthyIs(PLAYER_DRACULA) <= 10){
+    if (howHealthyIs(gameState, PLAYER_DRACULA) <= 10){
         //registerBestPlay("CD","Mwuhahahaha");
     }
     
