@@ -26,7 +26,7 @@ void decideHunterMove(HunterView gameState) {
         } else if (whereIs(gameState,id) == GALATZ) {
             bestPlay = "CD";
         }
-    } else if (id == PLAYER_LORD_GOLDAMING) {
+    } else if (id == PLAYER_LORD_GODALMING) {
         if (whereIs(gameState,id) == UNKNOWN_LOCATION) {
             bestPlay = "SR";
         } else {
@@ -47,7 +47,6 @@ void decideHunterMove(HunterView gameState) {
             }
             if (next != NUM_MAP_LOCATIONS) {
                 bestPlay = idToAbbrev(next);
-                // IMPORTANT: THERE IS NO idToAbbrev() FUNCTION, SHOULD WE ALTER PLACES.C TO MAKE ONE???
             } else {
                 bestPlay = idToAbbrev(lowest);
             }
@@ -73,7 +72,6 @@ void decideHunterMove(HunterView gameState) {
             }
             if (next != UNKNOWN_LOCATION) {
                 bestPlay = idToAbbrev(next);
-                // IMPORTANT: THERE IS NO idToAbbrev() FUNCTION, SHOULD WE ALTER PLACES.C TO MAKE ONE???
             } else {
                 bestPlay = idToAbbrev(highest);
             }
@@ -99,7 +97,6 @@ void decideHunterMove(HunterView gameState) {
             }
             if (next != UNKNOWN_LOCATION) {
                 bestPlay = idToAbbrev(next);
-                // IMPORTANT: THERE IS NO idToAbbrev() FUNCTION, SHOULD WE ALTER PLACES.C TO MAKE ONE???
             } else {
                 bestPlay = idToAbbrev(highest);
             }
