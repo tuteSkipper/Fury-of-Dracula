@@ -136,3 +136,9 @@ int abbrevToID(char *abbrev)
    }
    return NOWHERE;
 }
+// given a Place ID return its abbreviation (2 char)
+char *idToAbbrev(LocationID p)
+{
+    assert(validPlace(p));
+    return places[p].abbrev;
+}
