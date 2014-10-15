@@ -9,6 +9,8 @@
 void decideHunterMove(HunterView gameState) {
     PlayerID id = whoAmI(gameState);
     char *bestPlay = "";
+    printf ("Haters gonna hate hate hate \n");
+    
     
     if (id == PLAYER_DR_SEWARD) {
         if (whereIs(gameState,id) == UNKNOWN_LOCATION) {
@@ -102,6 +104,22 @@ void decideHunterMove(HunterView gameState) {
             }
         }
     }
+    
+    
+    
+    
+    
+    int *num = NULL;
+    LocationID *connect = whereCanTheyGo(gameState, num, id, TRUE, TRUE, TRUE);
+    printf ("YOYOYOYOYOYOYOYOYOYO \n");
+    int i = 0;
+    while (connect[i] != '\0') {
+        printf ("Connections is %d\n", connect[i]);
+    }
+    printf ("Fakers gonna fake fake fake \n");
+    
+    
+    
     
     registerBestPlay(bestPlay,"A semi-randomly moving AI");
 }

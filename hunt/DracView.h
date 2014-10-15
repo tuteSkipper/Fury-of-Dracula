@@ -72,7 +72,7 @@ LocationID whereIs(DracView currentView, PlayerID player);
 // The start and end locations can be the same
 
 void lastMove(DracView currentView, PlayerID player,
-                 LocationID *start, LocationID *end);
+              LocationID *start, LocationID *end);
 
 // Find out what minions I (Dracula) has placed at the specified location
 //   (minions are traps and immature vampires)
@@ -81,7 +81,7 @@ void lastMove(DracView currentView, PlayerID player,
 //   or NOWHERE), then set both counts to zero
 
 void whatsThere(DracView currentView, LocationID where,
-                         int *numTraps, int *numVamps);
+                int *numTraps, int *numVamps);
 
 
 //// Functions that return information about the history of the game
@@ -98,7 +98,7 @@ void whatsThere(DracView currentView, LocationID where,
 //   about where he has been (real locations, not double-back, etc)
 
 void giveMeTheTrail(DracView currentView, PlayerID player,
-                        LocationID trail[TRAIL_SIZE]);
+                    LocationID trail[TRAIL_SIZE]);
 
 
 //// Functions that query the map to find information about connectivity
