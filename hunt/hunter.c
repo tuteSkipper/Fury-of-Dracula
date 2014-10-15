@@ -9,7 +9,7 @@
 void decideHunterMove(HunterView gameState) {
     PlayerID id = whoAmI(gameState);
     char *bestPlay = "";
-    printf ("Haters gonna hate hate hate \n");
+    char *message = "";
     
     
     if (id == PLAYER_DR_SEWARD) {
@@ -28,12 +28,13 @@ void decideHunterMove(HunterView gameState) {
         } else if (whereIs(gameState,id) == GALATZ) {
             bestPlay = "CD";
         }
+        message = "Ring around the rosie";
     } else if (id == PLAYER_LORD_GODALMING) {
         if (whereIs(gameState,id) == UNKNOWN_LOCATION) {
             bestPlay = "SR";
         } else {
             LocationID current = whereIs(gameState, id);
-            int *numLocations = NULL;
+            int *numLocations = malloc(sizeof(int));
             LocationID *connections = whereCanTheyGo(gameState, numLocations, id, TRUE, TRUE, TRUE);
             int counter = 0;
             LocationID next = NUM_MAP_LOCATIONS;
@@ -52,13 +53,15 @@ void decideHunterMove(HunterView gameState) {
             } else {
                 bestPlay = idToAbbrev(lowest);
             }
+            free(numLocations);
         }
+        message = "God dalm ing.";
     } else if (id == PLAYER_VAN_HELSING) {
         if (whereIs(gameState,id) == UNKNOWN_LOCATION) {
             bestPlay = "HA";
         } else {
             LocationID current = whereIs(gameState, id);
-            int *numLocations = NULL;
+            int *numLocations = malloc(sizeof(int));
             LocationID *connections = whereCanTheyGo(gameState, numLocations, id, TRUE, TRUE, TRUE);
             int counter = 0;
             LocationID next = UNKNOWN_LOCATION;
@@ -77,13 +80,15 @@ void decideHunterMove(HunterView gameState) {
             } else {
                 bestPlay = idToAbbrev(highest);
             }
+            free(numLocations);
         }
+        message = "*insert message here*";
     } else if (id == PLAYER_MINA_HARKER) {
         if (whereIs(gameState,id) == UNKNOWN_LOCATION) {
             bestPlay = "VE";
         } else {
             LocationID current = whereIs(gameState, id);
-            int *numLocations = NULL;
+            int *numLocations = malloc(sizeof(int));
             LocationID *connections = whereCanTheyGo(gameState, numLocations, id, TRUE, TRUE, TRUE);
             int counter = 0;
             LocationID next = UNKNOWN_LOCATION;
@@ -102,24 +107,10 @@ void decideHunterMove(HunterView gameState) {
             } else {
                 bestPlay = idToAbbrev(highest);
             }
+            free(numLocations);
         }
+        message = "*insert message here*";
     }
     
-    
-    
-    
-    
-    int *num = NULL;
-    LocationID *connect = whereCanTheyGo(gameState, num, id, TRUE, TRUE, TRUE);
-    printf ("YOYOYOYOYOYOYOYOYOYO \n");
-    int i = 0;
-    while (connect[i] != '\0') {
-        printf ("Connections is %d\n", connect[i]);
-    }
-    printf ("Fakers gonna fake fake fake \n");
-    
-    
-    
-    
-    registerBestPlay(bestPlay,"A semi-randomly moving AI");
+    registerBestPlay(bestPlay,message);
 }

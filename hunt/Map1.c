@@ -8,22 +8,19 @@
 #include "Map.h"
 #include "Places.h"
 
-typedef struct vNode *VList;
-
-struct vNode {
-    LocationID  v;    // ALICANTE, etc
-    TransportID type; // ROAD, RAIL, BOAT
-    VList       next; // link to next node
-};
-
-struct MapRep {
-    int   nV;         // #vertices
-    int   nE;         // #edges
-    VList connections[NUM_MAP_LOCATIONS]; // array of lists
-
-    // immediate edges: num edges via each mode of transport
-    int adjmat[NUM_TRANSPORT][NUM_MAP_LOCATIONS][NUM_MAP_LOCATIONS];
-};
+/*typedef struct vNode *VList;
+ 
+ struct vNode {
+ LocationID  v;    // ALICANTE, etc
+ TransportID type; // ROAD, RAIL, BOAT
+ VList       next; // link to next node
+ };
+ 
+ struct MapRep {
+ int   nV;         // #vertices
+ int   nE;         // #edges
+ VList connections[NUM_MAP_LOCATIONS]; // array of lists
+ };*/
 
 static void addConnections(Map);
 
@@ -31,7 +28,7 @@ static void addConnections(Map);
 // #Vertices always same as NUM_PLACES
 Map newMap()
 {
-    int i, j, k;
+    int i;
     Map g = malloc(sizeof(struct MapRep));
     assert(g != NULL);
     g->nV = NUM_MAP_LOCATIONS;
@@ -39,28 +36,19 @@ Map newMap()
         g->connections[i] = NULL;
     }
     g->nE = 0;
-
-    for(k=0;k<NUM_TRANSPORT;k++) {
-        for(i=0;i<g->nV;i++) {
-            for(j=0;j<g->nV;j++) {
-                g->adjmat[k][i][j] = NO_EDGE;
-            }
-            g->adjmat[k][i][i] = 0;
-        }
-    }
     addConnections(g);
     return g;
 }
 
 // Remove an existing graph
-void destroyMap(Map g)
+void disposeMap(Map g)
 {
     int i;
     VList curr;
     VList next;
     assert(g != NULL);
     assert(g->connections != NULL);
-
+    
     for (i = 0; i < g->nV; i++){
         curr = g->connections[i];
         while(curr != NULL){
@@ -99,15 +87,6 @@ void addLink(Map g, LocationID start, LocationID end, TransportID type)
         g->connections[start] = insertVList(g->connections[start],end,type);
         g->connections[end] = insertVList(g->connections[end],start,type);
         g->nE++;
-    }
-
-    if(g->adjmat[type][start][end] == NO_EDGE) {
-        g->adjmat[type][start][end] = 1;
-    }
-
-    // other way, too; undirected graph
-    if(g->adjmat[type][end][start] == NO_EDGE) {
-        g->adjmat[type][end][start] = 1;
     }
 }
 
@@ -155,17 +134,11 @@ int numE(Map g, TransportID type)
     return nE;
 }
 
-// returns the distance of a direct edge of transport t FROM a TO b
-// or NO_EDGE if no such edge exists
-int  getDist(Map g, TransportID t, LocationID a, LocationID b) {
-    return g->adjmat[t][a][b];
-}
-
 // Add edges to Graph representing map of Europe
 static void addConnections(Map g)
 {
     //### ROAD Connections ###
-
+    
     addLink(g, ALICANTE, GRANADA, ROAD);
     addLink(g, ALICANTE, MADRID, ROAD);
     addLink(g, ALICANTE, SARAGOSSA, ROAD);
@@ -281,9 +254,9 @@ static void addConnections(Map g)
     addLink(g, ST_JOSEPH_AND_ST_MARYS, ZAGREB, ROAD);
     addLink(g, SZEGED, ZAGREB, ROAD);
     addLink(g, VIENNA, ZAGREB, ROAD);
-
+    
     //### RAIL Connections ###
-
+    
     addLink(g, ALICANTE, BARCELONA, RAIL);
     addLink(g, ALICANTE, MADRID, RAIL);
     addLink(g, BARCELONA, SARAGOSSA, RAIL);
@@ -327,9 +300,9 @@ static void addConnections(Map g)
     addLink(g, SOFIA, VARNA, RAIL);
     addLink(g, STRASBOURG, ZURICH, RAIL);
     addLink(g, VENICE, VIENNA, RAIL);
-
+    
     //### BOAT Connections ###
-
+    
     addLink(g, ADRIATIC_SEA, BARI, BOAT);
     addLink(g, ADRIATIC_SEA, IONIAN_SEA, BOAT);
     addLink(g, ADRIATIC_SEA, VENICE, BOAT);

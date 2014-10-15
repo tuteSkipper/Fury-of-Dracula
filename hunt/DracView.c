@@ -1,237 +1,208 @@
 // DracView.c ... DracView ADT implementation
 
-#include <stdlib.h>
 #include <stdio.h>
-#include <assert.h>
+#include <stdlib.h>
 #include <string.h>
-
+#include <assert.h>
 #include "Globals.h"
 #include "Game.h"
 #include "GameView.h"
 #include "DracView.h"
-#include "Map.h"
+// #include "Map.h" ... if you decide to use the Map ADT
 
+#ifdef DEBUG
+#define D(x...) fprintf(stderr,x)
+#else
+#define D(x...)
+#endif
+
+// pastPlays string
+// the number characters used to describe each play
+#define CHARS_PER_PLAY 7
+
+// including the space
+#define CHARS_PER_PLAY_BLOCK (CHARS_PER_PLAY+1)
+
+// indexes in pastPlays string
+
+// index that the location abbreviation starts in within the char *pastPlays
+#define LOC_ABBREV_INDEX 1
+
+// index of whether or not dracula placed a trap
+#define DRACULA_TRAP_INDEX 3
+
+// index of whether or not dracula placed a vamp
+#define DRACULA_VAMP_INDEX 4
+
+// index of action phase on dracula's turn
+#define DRACULA_ACTION_INDEX 5
+
+// index of the start of hunter encounters
+#define HUNTER_ENCOUNTERS_START_INDEX 3
+
+// maximum number of encounters a hunter can face in any one turn
+#define MAX_HUNTER_ENCOUNTERS 3
+
+// The maximum number of plays we will accept
+// Since each dracula turn reduces the score by one, we will set it to
+// at most 366 dracula's turns
+// ... plus a bit extra because josh is ultra-conservative
+#define MAX_PLAYS (366*5+5+10)
+
+// maximum length of past plays string
+#define MAX_PAST_PLAYS_LENGTH (MAX_PLAYS * CHARS_PER_PLAY_BLOCK)
+
+// id of the first round
+#define FIRST_ROUND 0
+
+// first and last double back
+#define DOUBLE_BACK_FIRST DOUBLE_BACK_1
+#define DOUBLE_BACK_LAST DOUBLE_BACK_5
+
+// most recent location in trail
+#define LAST_TRAIL_LOC_INDEX 0
+
+// dracView struct
 struct dracView {
-    int roundNumber;                      // total number of rounds
-    int turnNumber;                       // current turn number
-    int score;                            // current score
-    int HP[NUM_PLAYERS];                  // players' health points
-    int trail[NUM_PLAYERS][TRAIL_SIZE];   // players' trails
-    int whatIsThere[NUM_MAP_LOCATIONS][2];
-    Map m;
+    // the gameview that's within!
     GameView g;
+
+    // last TRAIL_SIZE _locations_; NOT moves
+    // in REVERSE chronological order
+    LocationID trailLocs[TRAIL_SIZE];
+
+    // number of each type of encounter at each location
+    int numTraps[NUM_MAP_LOCATIONS];
+
+    // location of the vampire; at most 1 at any tim
+    int vampLoc;
 };
 
+// helper functions
+static void pushOnTrailLocs (DracView d, LocationID placeID);
 
 // Creates a new DracView to summarise the current state of the game
 DracView newDracView(char *pastPlays, PlayerMessage messages[])
 {
-    DracView view = malloc(sizeof(struct dracView));
-    view->roundNumber = 0;
-    view->turnNumber = 1;
-    view->score = GAME_START_SCORE;
-    
-    int i;
-    for (i = 0; i < NUM_PLAYERS; i++) {
-        if (i < PLAYER_DRACULA) {
-            view->HP[i] = GAME_START_HUNTER_LIFE_POINTS;
-        } else {
-            view->HP[i] = GAME_START_BLOOD_POINTS;
-        }
+    assert(pastPlays != NULL);
+    assert(messages != NULL);
+
+    int i, j;
+
+    // malloc
+    DracView d = (DracView)(malloc(sizeof(struct dracView)));
+    assert(d != NULL);
+
+    // make the GameView
+    d->g = newGameView(pastPlays, messages);
+    assert(d->g != NULL);
+
+    // initialise Dracula's actual locations to all UNKNOWN_LOCATION
+    for(i=0;i<TRAIL_SIZE;i++) {
+        d->trailLocs[i] = UNKNOWN_LOCATION;
     }
-    
-    int j;
-    for (i = 0; i < NUM_PLAYERS; i++) {
-        for (j = 0; j < TRAIL_SIZE; j++) {
-            view->trail[i][j] = NOWHERE;
-        }
+
+    // fill out numTraps and find vamp location
+    // also iterate over past moves to generate the trailLocs[]
+
+    // initialise
+    for(i=0;i<NUM_MAP_LOCATIONS;i++) {
+        d->numTraps[i] = 0;
     }
-    
-    view->m = newMap();
-    view->g = newGameView(pastPlays, messages);
-    
-    int researchRecord[NUM_PLAYERS-1] = {0};
-    int curr = 0;
-    while (pastPlays[curr] != '\0') {
-        if (curr > 0) {
-            curr++; // to bring it to the correct character
-        }
-        
-        PlayerID currPlayer = view->turnNumber % NUM_PLAYERS;
-        printf("->turn num: %d\n", view->turnNumber);
-        if(view->turnNumber == 0 || view->turnNumber == 1){
-            currPlayer = PLAYER_LORD_GODALMING;
-        } else if(currPlayer == 0){
-            currPlayer = PLAYER_DRACULA;
-        } else {
-            currPlayer -= 1;
-        }
-        
-        for (i = TRAIL_SIZE-1; i >= 0; i--) { // put the move from the turn in the trail
-            // printf("%d\n", currPlayer);
-            if (i > 0) {
-                view->trail[currPlayer][i] = view->trail[currPlayer][i-1];
+    d->vampLoc = NOWHERE;
+
+    // length of pastPlays
+    int pastPlaysLength = strnlen(pastPlays, MAX_PAST_PLAYS_LENGTH); 
+
+    // iterate over each turn and process
+    for(i=0;i<pastPlaysLength;i+=CHARS_PER_PLAY_BLOCK) {
+        // get curPlayer
+        PlayerID curPlayer = ( (i/CHARS_PER_PLAY_BLOCK) % NUM_PLAYERS);
+
+        // try to get current loc (if it's exact)
+        LocationID curLoc = abbrevToID(pastPlays+i+LOC_ABBREV_INDEX);
+        //D("curLoc = %d, abbrev=%.2s\n",curLoc,pastPlays+i+LOC_ABBREV_INDEX);
+
+        // test if exact location
+        if(!validPlace(curLoc)) {
+            // it's not; we must be dracula
+            // use trail to work out where we really are
+
+            // either a HIDE, DOUBLE_BACK_ or TELEPORT
+            if(pastPlays[i+LOC_ABBREV_INDEX] == 'H') {
+                // HIDE: go to most recent location
+                curLoc = d->trailLocs[LAST_TRAIL_LOC_INDEX];
+            } else if(pastPlays[i+LOC_ABBREV_INDEX] == 'D') {
+                // DOUBLE BACK
+                int numBack = (int)(pastPlays[i+LOC_ABBREV_INDEX+1]-'0');
+                curLoc = d->trailLocs[numBack];
+            } else if(pastPlays[i+LOC_ABBREV_INDEX] == 'T') {
+                // TELEPORT back to CASTLE_DRACULA
+                curLoc = CASTLE_DRACULA;
             } else {
-                char place[3];
-                place[0] = pastPlays[curr+1];
-                place[1] = pastPlays[curr+2];
-                place[2] = '\0';
-                if (strcmp(place, "C?") == 0) {
-                    view->trail[currPlayer][i] = CITY_UNKNOWN;
-                } else if (strcmp(place, "S?") == 0) {
-                    view->trail[currPlayer][i] = SEA_UNKNOWN;
-                } else if (strcmp(place, "HI") == 0) {
-                    view->trail[currPlayer][i] = HIDE;
-                } else if (strcmp(place, "D1") == 0) {
-                    view->trail[currPlayer][i] = DOUBLE_BACK_1;
-                } else if (strcmp(place, "D2") == 0) {
-                    view->trail[currPlayer][i] = DOUBLE_BACK_2;
-                } else if (strcmp(place, "D3") == 0) {
-                    view->trail[currPlayer][i] = DOUBLE_BACK_3;
-                } else if (strcmp(place, "D4") == 0) {
-                    view->trail[currPlayer][i] = DOUBLE_BACK_4;
-                } else if (strcmp(place, "D5") == 0) {
-                    view->trail[currPlayer][i] = DOUBLE_BACK_5;
-                } else if (strcmp(place, "TP") == 0) {
-                    view->trail[currPlayer][i] = TELEPORT;
-                } else {
-                    printf("%d %s %d\n", i, place, currPlayer);
-                    view->trail[currPlayer][i] = abbrevToID(place);
-                    printf("%d\n", view->trail[currPlayer][i]);
+                // should never happen
+                assert(TRUE == FALSE);
+            }
+        }
+
+        // just to be sure
+        assert(validPlace(curLoc));
+
+        // test what player we are considering
+        if(curPlayer == PLAYER_DRACULA) {
+            // dracula
+
+            // trap
+            if(pastPlays[i+DRACULA_TRAP_INDEX] == 'T') {
+                d->numTraps[curLoc]++;
+            }
+
+            // vamp
+            if(pastPlays[i+DRACULA_VAMP_INDEX] == 'V') {
+                d->vampLoc = curLoc;
+            }
+
+            // action
+            if(pastPlays[i+DRACULA_ACTION_INDEX] == 'M') {
+                // trap from 6 turns ago (end of the trail) has malfunctioned
+                d->numTraps[d->trailLocs[TRAIL_SIZE-1]]--;
+            } else if(pastPlays[i+DRACULA_ACTION_INDEX] == 'V') {
+                // vampire has matured
+                d->vampLoc = NOWHERE;
+            }
+
+            // push curLoc onto the trail
+            pushOnTrailLocs(d, curLoc);
+        } else {
+            // a hunter
+
+            // loop through all encounters
+            for(j=0;j<MAX_HUNTER_ENCOUNTERS;j++) {
+                char curEncounter = 
+                    pastPlays[i+HUNTER_ENCOUNTERS_START_INDEX+j];
+
+                if(curEncounter == 'T') {
+                    // fell into a trap but disarmed it
+                    d->numTraps[curLoc]--;
+                } else if(curEncounter == 'V') {
+                    // vanquished a vampire
+                    d->vampLoc = NOWHERE;
                 }
             }
         }
-        
-        if ((pastPlays[curr] == 'G')||(pastPlays[curr] == 'S')||
-            (pastPlays[curr] == 'H')||(pastPlays[curr] == 'M')) {
-            if (view->HP[currPlayer] <= 0) {
-                view->HP[currPlayer] = 9;
-            }
-            
-            for (i = (curr+3); i < (curr+7); i++) {
-                if (pastPlays[i] == 'T') {
-                    view->HP[currPlayer] -= LIFE_LOSS_TRAP_ENCOUNTER;
-                    view->whatIsThere[whereIs(view,currPlayer)][0]--; //minus the current location of trap
-                } else if (pastPlays[i] == 'V') {
-                    // no life lost, vampire vanquished
-                    view->whatIsThere[whereIs(view,currPlayer)][1]--; //minus the current location of vamp
-                } else if (pastPlays[i] == 'D') {
-                    view->HP[currPlayer] -= LIFE_LOSS_DRACULA_ENCOUNTER;
-                    printf("%d %d\n", currPlayer, view->HP[currPlayer]);
-                    view->HP[PLAYER_DRACULA] -= LIFE_LOSS_HUNTER_ENCOUNTER;
-                }
-                
-                if (view->HP[currPlayer] <= 0) {
-                    view->score -= SCORE_LOSS_HUNTER_HOSPITAL;
-                }
-            }
-            
-            if (view->trail[currPlayer][0] == view->trail[currPlayer][1]) { // same place as last round
-                if (researchRecord[currPlayer] == 0) {
-                    researchRecord[currPlayer]++;
-                }
-                view->HP[currPlayer] += 3;
-                printf("dsjaod: %d %d\n", currPlayer, view->HP[currPlayer]);
-                while (view->HP[currPlayer] > 9) {
-                    view->HP[currPlayer]--;
-                }
-            } else if (researchRecord[currPlayer] == 1) {
-                researchRecord[currPlayer]--;
-            }
-            
-        } else  { // Dracula's turn
-            if (pastPlays[curr+3] == 'T') {
-                view->whatIsThere[whereIs(view,currPlayer)][0]++; //update the current location of trap
-            }
-            if (pastPlays[curr+4] == 'V') {
-                view->whatIsThere[whereIs(view,currPlayer)][1]++; //update the current location of vamp
-            }
-            
-            if (pastPlays[curr+6] == 'V') {
-                view->score -= SCORE_LOSS_VAMPIRE_MATURES;
-            }
-            
-            if (view->trail[currPlayer][0] == TELEPORT) {
-                view->HP[currPlayer] += LIFE_GAIN_CASTLE_DRACULA;
-            }
-            
-            if (view->trail[currPlayer][0] != NOWHERE) {
-                if (view->trail[currPlayer][0] < NUM_MAP_LOCATIONS) {
-                    if (idToType(view->trail[currPlayer][0]) == 2) {
-                        view->HP[currPlayer] -= LIFE_LOSS_SEA;
-                    }
-                } else if (view->trail[currPlayer][0] == SEA_UNKNOWN) {
-                    view->HP[currPlayer] -= LIFE_LOSS_SEA;
-                } else if (view->trail[currPlayer][0] == DOUBLE_BACK_1) {
-                    if (view->trail[currPlayer][1] != NOWHERE) {
-                        if (view->trail[currPlayer][1] < NUM_MAP_LOCATIONS) {
-                            if (idToType(view->trail[currPlayer][1]) == 2) {
-                                view->HP[currPlayer] -= LIFE_LOSS_SEA;
-                            }
-                        } else if (view->trail[currPlayer][1] == SEA_UNKNOWN) {
-                            view->HP[currPlayer] -= LIFE_LOSS_SEA;
-                        }
-                    }
-                } else if (view->trail[currPlayer][0] == DOUBLE_BACK_2) {
-                    if (view->trail[currPlayer][1] != NOWHERE) {
-                        if (view->trail[currPlayer][2] < NUM_MAP_LOCATIONS) {
-                            if (idToType(view->trail[currPlayer][2]) == 2) {
-                                view->HP[currPlayer] -= LIFE_LOSS_SEA;
-                            }
-                        } else if (view->trail[currPlayer][2] == SEA_UNKNOWN) {
-                            view->HP[currPlayer] -= LIFE_LOSS_SEA;
-                        }
-                    }
-                } else if (view->trail[currPlayer][0] == DOUBLE_BACK_3) {
-                    if (view->trail[currPlayer][1] != NOWHERE) {
-                        if (view->trail[currPlayer][3] < NUM_MAP_LOCATIONS) {
-                            if (idToType(view->trail[currPlayer][3]) == 2) {
-                                view->HP[currPlayer] -= LIFE_LOSS_SEA;
-                            }
-                        } else if (view->trail[currPlayer][3] == SEA_UNKNOWN) {
-                            view->HP[currPlayer] -= LIFE_LOSS_SEA;
-                        }
-                    }
-                } else if (view->trail[currPlayer][0] == DOUBLE_BACK_4) {
-                    if (view->trail[currPlayer][1] != NOWHERE) {
-                        if (view->trail[currPlayer][4] < NUM_MAP_LOCATIONS) {
-                            if (idToType(view->trail[currPlayer][4]) == 2) {
-                                view->HP[currPlayer] -= LIFE_LOSS_SEA;
-                            }
-                        } else if (view->trail[currPlayer][4] == SEA_UNKNOWN) {
-                            view->HP[currPlayer] -= LIFE_LOSS_SEA;
-                        }
-                    }
-                } else if (view->trail[currPlayer][0] == DOUBLE_BACK_5) {
-                    if (view->trail[currPlayer][1] != NOWHERE) {
-                        if (view->trail[currPlayer][5] < NUM_MAP_LOCATIONS) {
-                            if (idToType(view->trail[currPlayer][5]) == 2) {
-                                view->HP[currPlayer] -= LIFE_LOSS_SEA;
-                            }
-                        } else if (view->trail[currPlayer][5] == SEA_UNKNOWN) {
-                            view->HP[currPlayer] -= LIFE_LOSS_SEA;
-                        }
-                    }
-                }
-            }
-        }
-        
-        view->turnNumber++;
-        if (pastPlays[curr] == 'D') { // update round number
-            view->roundNumber++;
-            view->score--; // decrease score after Dracula's turn
-        }
-        
-        curr += 7;     // gets to the space or NULL if no more plays
     }
-    return view;
+
+    return d;
 }
 
 
 // Frees all memory previously allocated for the DracView toBeDeleted
 void disposeDracView(DracView toBeDeleted)
 {
-    //COMPLETE THIS IMPLEMENTATION
+    assert(toBeDeleted != NULL);
+
+    // free the GameView
+    disposeGameView(toBeDeleted->g);
     free( toBeDeleted );
 }
 
@@ -241,65 +212,95 @@ void disposeDracView(DracView toBeDeleted)
 // Get the current round
 Round giveMeTheRound(DracView currentView)
 {
-    return currentView->roundNumber;
+    assert(currentView != NULL);
+    return getRound(currentView->g);
 }
 
 // Get the current score
 int giveMeTheScore(DracView currentView)
 {
-    return currentView->score;
+    assert(currentView != NULL);
+    return getScore(currentView->g);
 }
 
 // Get the current health points for a given player
 int howHealthyIs(DracView currentView, PlayerID player)
 {
-    printf("%d %d\n", player, currentView->HP[player]);
-    return currentView->HP[player];
+    assert(currentView != NULL);
+    return getHealth(currentView->g, player);
 }
 
 // Get the current location id of a given player
-LocationID whereIs(DracView currentView, PlayerID player) {
-    if (currentView->trail[player][0] == TELEPORT) {
-        return CASTLE_DRACULA;
+LocationID whereIs(DracView currentView, PlayerID player)
+{
+    assert(currentView != NULL);
+
+    // return value
+    LocationID ret;
+    
+    // check if we're dracula
+    if(player == PLAYER_DRACULA) {
+        // return from our trail
+        ret = currentView->trailLocs[LAST_TRAIL_LOC_INDEX];
+    } else {
+        // call GameView ADT
+       ret = getLocation(currentView->g, player);
     }
-    return currentView->trail[player][0];
+    return ret;
 }
 
 // Get the most recent move of a given player
 void lastMove(DracView currentView, PlayerID player,
-              LocationID *start, LocationID *end)
+        LocationID *start, LocationID *end)
 {
-    (*start) = currentView->trail[player][1];
-    (*end) = currentView->trail[player][0];
-    
-    printf ("Location ID  start is %d\n", (*start));
-    printf ("Location ID end is %d\n", (*end));
-    
-    
-    return;
+    assert(currentView != NULL);
+    assert(0 <= player && player < NUM_PLAYERS);
+    assert(start != NULL);
+    assert(end != NULL);
+
+    // read it off the trail
+    LocationID trail[TRAIL_SIZE];
+
+    // get the trail from the gameview
+    getHistory(currentView->g, player, trail);
+
+    // return last two locations from the first two spots in trail (reverse
+    // chronological order)
+    (*end) = trail[0];
+    (*start) = trail[1];
 }
 
 // Find out what minions are placed at the specified location
-void whatsThere(DracView currentView, LocationID where, int *numTraps, int *numVamps){
-    
-    if (idToType(where) == SEA || idToType(where) == NOWHERE){
-        numTraps = 0;
-        numVamps = 0;
+void whatsThere(DracView currentView, LocationID where,
+        int *numTraps, int *numVamps)
+{
+    assert(currentView != NULL);
+    assert(validPlace(where));
+
+    // check if vamp there
+    if(where == currentView->vampLoc) {
+        (*numVamps) = 1;
     } else {
-        *numTraps = currentView->whatIsThere[where][0];
-        *numVamps = currentView->whatIsThere[where][1];
+        (*numVamps) = 0;
     }
+
+    // get numTraps
+    (*numTraps) = currentView->numTraps[where];
+
+//    D("whatsThere: where=%d, nT=%d, nV=%d\n",where,(*numTraps),(*numVamps));
 }
 
 //// Functions that return information about the history of the game
 
 // Fills the trail array with the location ids of the last 6 turns
-void giveMeTheTrail(DracView currentView, PlayerID player, LocationID trail[TRAIL_SIZE]){
-    int i;
-    int j;
-    for (i =0, j = 0 ; i < TRAIL_SIZE; i++, j++) {
-        trail[i] = currentView->trail[player][j];
-    }
+void giveMeTheTrail(DracView currentView, PlayerID player,
+        LocationID trail[TRAIL_SIZE])
+{
+    assert(currentView != NULL);
+    assert(0 <= player && player < NUM_PLAYERS);
+    assert(trail != NULL);
+
+    getHistory(currentView->g, player, trail);
 }
 
 //// Functions that query the map to find information about connectivity
@@ -307,21 +308,193 @@ void giveMeTheTrail(DracView currentView, PlayerID player, LocationID trail[TRAI
 // What are my (Dracula's) possible next moves (locations)
 LocationID *whereCanIgo(DracView currentView, int *numLocations, int road, int sea)
 {
-    LocationID *locations = malloc(NUM_MAP_LOCATIONS*sizeof(int));
-    LocationID currLocation = whereIs(currentView, PLAYER_DRACULA);
-    locations = connectedLocations(currentView->g, numLocations, currLocation,
-                                   PLAYER_DRACULA, currentView->roundNumber, road, FALSE, sea);
-    return locations;
+    assert(currentView != NULL);
+    assert(numLocations != NULL);
+
+    int i, j;
+
+    // output array
+    LocationID *out = 
+        (LocationID *)(malloc(sizeof(LocationID) * NUM_MAP_LOCATIONS));
+    assert(out != NULL);
+
+    (*numLocations) = 0;
+
+    // check if first round
+    if(getRound(currentView->g) == FIRST_ROUND) {
+        // everywhere except ST_JOSEPH_AND_ST_MARYS
+        for(i=0;i<NUM_MAP_LOCATIONS;i++) {
+            if(i != ST_JOSEPH_AND_ST_MARYS) {
+                out[(*numLocations)] = i;
+                (*numLocations)++;
+            }
+        }
+    } else {
+        // find all the connected locations, then rule out the ones that are in our
+        // TRAIL, unless he's been there before in the trail unless he hasn't done
+        // the appropriate (HIDE | DOUBLE_BACK)
+
+        // get those connected to us
+        int numConnected;
+        LocationID *connected = 
+            connectedLocations(currentView->g,
+                            &numConnected,
+                            whereIs(currentView, PLAYER_DRACULA),
+                            PLAYER_DRACULA,
+                            getRound(currentView->g),
+                            road, // road
+                            FALSE, // rail
+                            sea); // sea
+
+        assert(connected != NULL);
+
+        // get our history
+        LocationID *hist = (LocationID *)(malloc(sizeof(LocationID)*TRAIL_SIZE));
+        getHistory(currentView->g, PLAYER_DRACULA, hist);
+
+        // check getHistory actually did something and returned a non-NULL
+        assert(hist != NULL);
+
+        // work out if we've HIDE or DOUBLE_BACK recently
+        int hasHide = FALSE;
+        int hasDoubleBack = FALSE;
+
+        // only consider last TRAIL_SIZE-1 moves since the last move 'falls off the
+        // end' before we get our current move
+        for(i=0;i<TRAIL_SIZE-1;i++) {
+            // check doubling back
+            if(DOUBLE_BACK_FIRST <= hist[i] &&
+            hist[i] <= DOUBLE_BACK_LAST) {
+                hasDoubleBack = TRUE;
+            }
+
+            if(hist[i] == HIDE) {
+                hasHide = TRUE;
+            }
+        }
+
+        // iterate over all the possibilities
+        for(i=0;i<numConnected;i++) {
+            // i don't trust anyone... *looks around suspiciously*
+            assert(validPlace(connected[i]));
+
+            // check if it's anywhere in our trail
+            int isCurPos = FALSE;
+
+            // this one excludes current pos (double back)
+            int inTrail = FALSE;
+            for(j=0;j<TRAIL_SIZE;j++) {
+                // see if it matches
+                if(connected[i] == currentView->trailLocs[j]) {
+                    // check if it's equal to our current pos
+                    if(j == 0) {
+                        isCurPos = TRUE;
+                    } else {
+                        inTrail = TRUE;
+                    }
+                }
+            }
+
+            // check if legit
+            int isLegit = TRUE;
+
+            // ensure we can't HIDE at sea
+            if(isCurPos == TRUE && idToType(connected[i]) == SEA) {
+                isLegit = FALSE;
+            }
+
+            if(isLegit == TRUE) {
+                isLegit = FALSE;
+
+                // test what kind of move we can make to do this
+
+                // see if we just go there normally
+                if(isCurPos == FALSE && inTrail == FALSE) {
+                    isLegit = TRUE;
+                }
+
+                // see if we can hide
+                if(isCurPos == TRUE) {
+                    // MUST be considered a HIDE move
+                    if(hasHide == FALSE) {
+    //                    D("at %s\n",idToName(connected[i]));
+                        isLegit = TRUE;
+                    }
+                } else {
+                    // see if we can DOUBLE_BACK
+                    if(inTrail == TRUE && hasDoubleBack == FALSE) {
+                        isLegit = TRUE;
+                    }
+                }
+
+                if(isLegit == TRUE) {
+                    // legit! add and increment
+                    out[(*numLocations)] = connected[i];
+                    (*numLocations)++;
+                }
+            }
+        }
+    }
+
+    return out;
 }
 
 // What are the specified player's next possible moves
 LocationID *whereCanTheyGo(DracView currentView, int *numLocations,
-                           PlayerID player, int road, int rail, int sea)
+        PlayerID player, int road, int rail, int sea)
 {
-    LocationID *locations = malloc(NUM_MAP_LOCATIONS*sizeof(int));
-    LocationID currLocation = whereIs(currentView, player);
-    locations = connectedLocations(currentView->g, numLocations, currLocation,
-                                   player, currentView->roundNumber, road, rail, sea);
-    return locations;
+    assert(currentView != NULL);
+    assert(numLocations != NULL);
+    assert(0 <= player && player < NUM_PLAYERS);
+
+    // return value
+    LocationID *ret;
+
+    if(player == PLAYER_DRACULA) {
+        // call whereCanIgo
+        ret = whereCanIgo(currentView, numLocations, road, sea);
+    } else {
+        // call connectedLocations
+        Round theirNextRound;
+
+        // check if they're before or after me
+        if(player >= getCurrentPlayer(currentView->g)) {
+            theirNextRound = getRound(currentView->g);
+        } else {
+            theirNextRound = getRound(currentView->g) + 1;
+        }
+
+        if(theirNextRound == FIRST_ROUND) {
+            // ANYWHERE!
+            ret = (LocationID *)(malloc(sizeof(LocationID)*NUM_MAP_LOCATIONS));
+
+            (*numLocations) = 0;
+
+            int i;
+            for(i=0;i<NUM_MAP_LOCATIONS;i++) {
+                ret[(*numLocations)] = i;
+                (*numLocations)++;
+            }
+        } else {
+            ret = connectedLocations(currentView->g, numLocations,
+                                    whereIs(currentView, player), player,
+                                    theirNextRound,
+                                    road, rail, sea);
+        }
+    }
+
+    assert(ret != NULL);
+    return ret;
 }
 
+static void pushOnTrailLocs (DracView d, LocationID placeID) {
+    assert(d != NULL);
+    assert(validPlace(placeID));
+
+    int i;
+    for(i=TRAIL_SIZE-1; i>=1; i--) {
+        d->trailLocs[i] = d->trailLocs[i-1];
+    }
+    d->trailLocs[0] = placeID;
+    return;
+}
