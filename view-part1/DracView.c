@@ -282,7 +282,6 @@ void lastMove(DracView currentView, PlayerID player,
 // Find out what minions are placed at the specified location
 void whatsThere(DracView currentView, LocationID where, int *numTraps, int *numVamps){
     
-    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     if (idToType(where) == SEA || idToType(where) == NOWHERE){
         numTraps = 0;
         numVamps = 0;
@@ -306,13 +305,12 @@ void giveMeTheTrail(DracView currentView, PlayerID player, LocationID trail[TRAI
 //// Functions that query the map to find information about connectivity
 
 // What are my (Dracula's) possible next moves (locations)
-LocationID *whereCanIgo(DracView currentView, int *numLocations, int road, int rail, int sea)
+LocationID *whereCanIgo(DracView currentView, int *numLocations, int road, int sea)
 {
-    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     LocationID *locations = malloc(NUM_MAP_LOCATIONS*sizeof(int));
     LocationID currLocation = whereIs(currentView, PLAYER_DRACULA);
     locations = connectedLocations(currentView->g, numLocations, currLocation,
-                                   PLAYER_DRACULA, currentView->roundNumber, road, rail, sea);
+                                   PLAYER_DRACULA, currentView->roundNumber, road, FALSE, sea);
     return locations;
 }
 
@@ -320,7 +318,6 @@ LocationID *whereCanIgo(DracView currentView, int *numLocations, int road, int r
 LocationID *whereCanTheyGo(DracView currentView, int *numLocations,
                            PlayerID player, int road, int rail, int sea)
 {
-    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     LocationID *locations = malloc(NUM_MAP_LOCATIONS*sizeof(int));
     LocationID currLocation = whereIs(currentView, player);
     locations = connectedLocations(currentView->g, numLocations, currLocation,

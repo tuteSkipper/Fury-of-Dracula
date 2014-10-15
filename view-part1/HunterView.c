@@ -11,7 +11,7 @@
 #include "HunterView.h"
 #include "Places.h"
 #include "Map.h"
-     
+
 struct hunterView {
     int roundNumber;                      // total number of rounds
     int turnNumber;                       // current turn number
@@ -21,7 +21,7 @@ struct hunterView {
     Map m;
     GameView g;
 };
-     
+
 
 // Creates a new HunterView to summarise the current state of the game
 HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
@@ -32,15 +32,15 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
     view->score = GAME_START_SCORE;
     
     PlayerID playerID;
-
+    
     int i;
     for (i = 0; i < NUM_PLAYERS; i++) {
         if (i < PLAYER_DRACULA) {
             view->HP[i] = GAME_START_HUNTER_LIFE_POINTS;
         } else {
-            view->HP[i] = GAME_START_BLOOD_POINTS;    
+            view->HP[i] = GAME_START_BLOOD_POINTS;
         }
-    }    
+    }
     
     int j;
     // can't reveal Dracula trail to hunters ?
@@ -52,7 +52,7 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
     
     view->m = newMap();
     view->g = newGameView(pastPlays, messages);
-
+    
     int researchRecord[NUM_PLAYERS-1] = {0};
     int curr = 0;
     while (pastPlays[curr] != '\0') {
@@ -64,9 +64,9 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
         //printf ("playerID is %d\n", playerID);
         
         for (i = TRAIL_SIZE-1; i >= 0; i--) { // put the move from the turn in the trail
-         // printf("%d\n", playerID);
+            // printf("%d\n", playerID);
             if (i > 0) {
-               view->trail[playerID][i] = view->trail[playerID][i-1];
+                view->trail[playerID][i] = view->trail[playerID][i-1];
             } else {
                 char place[3];
                 place[0] = pastPlays[curr+1];
@@ -112,13 +112,13 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
                     printf("%d %d\n", playerID, view->HP[playerID]);
                     view->HP[PLAYER_DRACULA] -= LIFE_LOSS_HUNTER_ENCOUNTER;
                 }
-
+                
                 if (view->HP[playerID] <= 0) {
-                  view->score -= SCORE_LOSS_HUNTER_HOSPITAL;
+                    view->score -= SCORE_LOSS_HUNTER_HOSPITAL;
                 }
-                    // yes??
+                // yes??
                 // if (view->HP[playerID] <= 0) {
-                    // view->trail[playerID][TRAIL_SIZE-1] = ST_JOSEPH_AND_ST_MARYS;
+                // view->trail[playerID][TRAIL_SIZE-1] = ST_JOSEPH_AND_ST_MARYS;
                 // }
             }
             
@@ -131,104 +131,104 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[]) {
             
             // }
             // }
-         
+            
             // if ((researchRecord[PLAYER_LORD_GODALMING] == 1)&&(researchRecord[PLAYER_DR_SEWARD] == 1)&&
-                // (researchRecord[PLAYER_VAN_HELSING] == 1)&&(researchRecord[PLAYER_MINA_HARKER] == 1)) {
-                // all hunters have not moved for one go and researches
-                // int research = view->trail[PLAYER_DRACULA][0]; // should this be an aspect of the view struct or a static function????
-                // research = research; // to make it compile
+            // (researchRecord[PLAYER_VAN_HELSING] == 1)&&(researchRecord[PLAYER_MINA_HARKER] == 1)) {
+            // all hunters have not moved for one go and researches
+            // int research = view->trail[PLAYER_DRACULA][0]; // should this be an aspect of the view struct or a static function????
+            // research = research; // to make it compile
             // }
-
+            
             if (view->trail[playerID][0] == view->trail[playerID][1]) { // same place as last round
-               if (researchRecord[playerID] == 0) {
-                  researchRecord[playerID]++;
-               }
-               view->HP[playerID] += 3;
-               printf("dsjaod: %d %d\n", playerID, view->HP[playerID]);
-               while (view->HP[playerID] > 9) {
-                  view->HP[playerID]--;
-               }
+                if (researchRecord[playerID] == 0) {
+                    researchRecord[playerID]++;
+                }
+                view->HP[playerID] += 3;
+                printf("dsjaod: %d %d\n", playerID, view->HP[playerID]);
+                while (view->HP[playerID] > 9) {
+                    view->HP[playerID]--;
+                }
             } else if (researchRecord[playerID] == 1) {
-               researchRecord[playerID]--;
+                researchRecord[playerID]--;
             }
             
         } else  { // Dracula's turn
             if (pastPlays[curr+6] == 'V') {
                 view->score -= SCORE_LOSS_VAMPIRE_MATURES;
             }
-
+            
             if (view->trail[playerID][0] == TELEPORT) {
-               view->HP[playerID] += LIFE_GAIN_CASTLE_DRACULA;
+                view->HP[playerID] += LIFE_GAIN_CASTLE_DRACULA;
             }
-
+            
             if (view->trail[playerID][0] != NOWHERE) {
-               if (view->trail[playerID][0] < NUM_MAP_LOCATIONS) {
-                  if (idToType(view->trail[playerID][0]) == 2) {
-                     view->HP[playerID] -= LIFE_LOSS_SEA;
-                  }
-               } else if (view->trail[playerID][0] == SEA_UNKNOWN) {
-                  view->HP[playerID] -= LIFE_LOSS_SEA;
-               } else if (view->trail[playerID][0] == DOUBLE_BACK_1) {
-                  if (view->trail[playerID][1] != NOWHERE) {
-                     if (view->trail[playerID][1] < NUM_MAP_LOCATIONS) {
-                        if (idToType(view->trail[playerID][1]) == 2) {
-                           view->HP[playerID] -= LIFE_LOSS_SEA;
-                        }
-                     } else if (view->trail[playerID][1] == SEA_UNKNOWN) {
+                if (view->trail[playerID][0] < NUM_MAP_LOCATIONS) {
+                    if (idToType(view->trail[playerID][0]) == 2) {
                         view->HP[playerID] -= LIFE_LOSS_SEA;
-                     }
-                  }
-               } else if (view->trail[playerID][0] == DOUBLE_BACK_2) {
-                  if (view->trail[playerID][1] != NOWHERE) {
-                     if (view->trail[playerID][2] < NUM_MAP_LOCATIONS) {
-                        if (idToType(view->trail[playerID][2]) == 2) {
-                           view->HP[playerID] -= LIFE_LOSS_SEA;
+                    }
+                } else if (view->trail[playerID][0] == SEA_UNKNOWN) {
+                    view->HP[playerID] -= LIFE_LOSS_SEA;
+                } else if (view->trail[playerID][0] == DOUBLE_BACK_1) {
+                    if (view->trail[playerID][1] != NOWHERE) {
+                        if (view->trail[playerID][1] < NUM_MAP_LOCATIONS) {
+                            if (idToType(view->trail[playerID][1]) == 2) {
+                                view->HP[playerID] -= LIFE_LOSS_SEA;
+                            }
+                        } else if (view->trail[playerID][1] == SEA_UNKNOWN) {
+                            view->HP[playerID] -= LIFE_LOSS_SEA;
                         }
-                     } else if (view->trail[playerID][2] == SEA_UNKNOWN) {
-                        view->HP[playerID] -= LIFE_LOSS_SEA;
-                     }
-                  }
-               } else if (view->trail[playerID][0] == DOUBLE_BACK_3) {
-                  if (view->trail[playerID][1] != NOWHERE) {
-                     if (view->trail[playerID][3] < NUM_MAP_LOCATIONS) {
-                        if (idToType(view->trail[playerID][3]) == 2) {
-                           view->HP[playerID] -= LIFE_LOSS_SEA;
+                    }
+                } else if (view->trail[playerID][0] == DOUBLE_BACK_2) {
+                    if (view->trail[playerID][1] != NOWHERE) {
+                        if (view->trail[playerID][2] < NUM_MAP_LOCATIONS) {
+                            if (idToType(view->trail[playerID][2]) == 2) {
+                                view->HP[playerID] -= LIFE_LOSS_SEA;
+                            }
+                        } else if (view->trail[playerID][2] == SEA_UNKNOWN) {
+                            view->HP[playerID] -= LIFE_LOSS_SEA;
                         }
-                     } else if (view->trail[playerID][3] == SEA_UNKNOWN) {
-                        view->HP[playerID] -= LIFE_LOSS_SEA;
-                     }
-                  }
-               } else if (view->trail[playerID][0] == DOUBLE_BACK_4) {
-                  if (view->trail[playerID][1] != NOWHERE) {
-                     if (view->trail[playerID][4] < NUM_MAP_LOCATIONS) {
-                        if (idToType(view->trail[playerID][4]) == 2) {
-                           view->HP[playerID] -= LIFE_LOSS_SEA;
+                    }
+                } else if (view->trail[playerID][0] == DOUBLE_BACK_3) {
+                    if (view->trail[playerID][1] != NOWHERE) {
+                        if (view->trail[playerID][3] < NUM_MAP_LOCATIONS) {
+                            if (idToType(view->trail[playerID][3]) == 2) {
+                                view->HP[playerID] -= LIFE_LOSS_SEA;
+                            }
+                        } else if (view->trail[playerID][3] == SEA_UNKNOWN) {
+                            view->HP[playerID] -= LIFE_LOSS_SEA;
                         }
-                     } else if (view->trail[playerID][4] == SEA_UNKNOWN) {
-                        view->HP[playerID] -= LIFE_LOSS_SEA;
-                     }
-                  }
-               } else if (view->trail[playerID][0] == DOUBLE_BACK_5) {
-                  if (view->trail[playerID][1] != NOWHERE) {
-                     if (view->trail[playerID][5] < NUM_MAP_LOCATIONS) {
-                        if (idToType(view->trail[playerID][5]) == 2) {
-                           view->HP[playerID] -= LIFE_LOSS_SEA;
+                    }
+                } else if (view->trail[playerID][0] == DOUBLE_BACK_4) {
+                    if (view->trail[playerID][1] != NOWHERE) {
+                        if (view->trail[playerID][4] < NUM_MAP_LOCATIONS) {
+                            if (idToType(view->trail[playerID][4]) == 2) {
+                                view->HP[playerID] -= LIFE_LOSS_SEA;
+                            }
+                        } else if (view->trail[playerID][4] == SEA_UNKNOWN) {
+                            view->HP[playerID] -= LIFE_LOSS_SEA;
                         }
-                     } else if (view->trail[playerID][5] == SEA_UNKNOWN) {
-                        view->HP[playerID] -= LIFE_LOSS_SEA;
-                     }
-                  }
-               }
+                    }
+                } else if (view->trail[playerID][0] == DOUBLE_BACK_5) {
+                    if (view->trail[playerID][1] != NOWHERE) {
+                        if (view->trail[playerID][5] < NUM_MAP_LOCATIONS) {
+                            if (idToType(view->trail[playerID][5]) == 2) {
+                                view->HP[playerID] -= LIFE_LOSS_SEA;
+                            }
+                        } else if (view->trail[playerID][5] == SEA_UNKNOWN) {
+                            view->HP[playerID] -= LIFE_LOSS_SEA;
+                        }
+                    }
+                }
             }
         } // Not needed in HunterView
-          // ^ Needed for score, though???
-      
-      view->turnNumber++;
-      if (pastPlays[curr] == 'D') { // update round number
-         view->roundNumber++;
-         view->score--; // decrease score after Dracula's turn
-      }
-
+        // ^ Needed for score, though???
+        
+        view->turnNumber++;
+        if (pastPlays[curr] == 'D') { // update round number
+            view->roundNumber++;
+            view->score--; // decrease score after Dracula's turn
+        }
+        
         curr += 7;     // gets to the space or NULL if no more plays
     }
     
@@ -253,17 +253,17 @@ Round giveMeTheRound(HunterView currentView) {
 
 // Get the id of current player
 PlayerID whoAmI(HunterView currentView) {
-   PlayerID player = currentView->turnNumber % NUM_PLAYERS;
-   if (player == 0) {
-      player = PLAYER_DRACULA;
-   } else {
-      player -= 1;
-   }
+    PlayerID player = currentView->turnNumber % NUM_PLAYERS;
+    if (player == 0) {
+        player = PLAYER_DRACULA;
+    } else {
+        player -= 1;
+    }
     
-   if (currentView->turnNumber == 0) {
-      player = PLAYER_LORD_GODALMING;
-   }
-   return (player);
+    if (currentView->turnNumber == 0) {
+        player = PLAYER_LORD_GODALMING;
+    }
+    return (player);
 }
 
 // Get the current score
@@ -280,7 +280,7 @@ int howHealthyIs(HunterView currentView, PlayerID player) {
 LocationID whereIs(HunterView currentView, PlayerID player) {
     // need to adjust for trail array
     if (currentView->trail[player][0] == TELEPORT) {
-      return CASTLE_DRACULA;
+        return CASTLE_DRACULA;
     }
     return currentView->trail[player][0];
 }
