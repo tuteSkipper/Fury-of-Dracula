@@ -54,7 +54,18 @@ int main(int argc, char *argv[])
    disposeDracView(gameState);
 #else
    HunterView gameState;
-   char *plays = "GZA.... SED.... HZU....";
+   // char *plays = "GZA....";
+   // char *plays = "GZA.... SED....";
+   // char *plays = "GZA.... SED.... HZU....";
+   // char *plays = "GSR.... SCD.... HHA.... MVE.... DCD....";
+   // char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... GTO....";
+   // char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... GTO.... SKL....";
+   // char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... GTO.... SKL.... HFR....";
+   // char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... GTO.... SKL.... HFR.... MMU.... DSR....";
+   // char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... GTO.... SKL.... HFR.... MMU.... DSR.... GBA....";
+   // char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... GTO.... SKL.... HFR.... MMU.... DSR.... GBA.... SSZ....";
+   // char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... GTO.... SKL.... HFR.... MMU.... DSR.... GBA.... SSZ.... HCO....";
+   char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... GTO.... SKL.... HFR.... MMU.... DSR.... GBA.... SSZ.... HCO.... MMI....";
    PlayerMessage msgs[3] = { "", "", "" };
    gameState = newHunterView(plays,msgs);
    decideHunterMove(gameState);

@@ -18,11 +18,11 @@ void decideDraculaMove(DracView gameState)
     srand(time(NULL));
     
     //Get all location
-    LocationID allPlaces[NUM_MAP_LOCATIONS];
-    int i;
-    for (i = 0; i < NUM_MAP_LOCATIONS; i++) {
-        allPlaces[i] = i;
-    }
+    // LocationID allPlaces[NUM_MAP_LOCATIONS];
+    // int i;
+    // for (i = 0; i < NUM_MAP_LOCATIONS; i++) {
+        // allPlaces[i] = i;
+    // }
     
     //going to a random place at the start 
     Round currRound = giveMeTheRound(gameState);
