@@ -18,6 +18,7 @@ int main(int argc, char *argv[])
 	while (nvals < MAXVALS && scanf("%d",&n) == 1) {
 		v[nvals++] = n;
 		//T = BSTreeInsert(T,n);
+        printf("Insert: %d\n",n);
         T = insertRebalance(T,n);
         printf("Tree:\n");showBSTree(T);
 	}
