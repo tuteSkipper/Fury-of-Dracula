@@ -36,7 +36,23 @@ void decideDraculaMove(DracView gameState)
         char *goToPlace = idToAbbrev(r);
         registerBestPlay(goToPlace,"Mwuhahahaha");
     } else {
-        //Location *whereToGo = whereCanIgo(gameState, ,TRUE, FALSE);
+        int size;
+        LocationID *whereToGo = malloc(NUM_MAP_LOCATIONS);
+        whereToGo = whereCanIgo(gameState, &size ,TRUE, FALSE);
+        if (size <= 1)
+        {
+            whereToGo = whereCanIgo(gameState, &size ,FALSE, TRUE);
+            if (size <= 1) {
+                registerBestPlay("HI","Mwuhahahaha");
+                return;
+            }
+        }
+        int i = rand()%size;
+        if (i == 0)
+            i++;
+        int dest = whereToGo[i];
+        char *goToPlace = idToAbbrev(dest);
+        registerBestPlay(goToPlace,"Mwuhahahaha");
     }
     
     if (howHealthyIs(gameState, PLAYER_DRACULA) <= 10){
