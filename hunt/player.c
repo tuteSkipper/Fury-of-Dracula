@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
    // char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... GTO.... SKL.... HFR.... MMU.... DSR.... GBA....";
    // char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... GTO.... SKL.... HFR.... MMU.... DSR.... GBA.... SSZ....";
    // char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... GTO.... SKL.... HFR.... MMU.... DSR.... GBA.... SSZ.... HCO....";
-   char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... GTO.... SKL.... HFR.... MMU.... DSR.... GBA.... SSZ.... HCO.... MMI....";
+ char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... GTO.... SKL.... HFR.... MMU.... DSR.... GBA.... SSZ.... HCO.... MMI....";
    PlayerMessage msgs[3] = { "", "", "" };
    gameState = newHunterView(plays,msgs);
    decideHunterMove(gameState);

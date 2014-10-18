@@ -112,5 +112,10 @@ void decideHunterMove(HunterView gameState) {
         message = "*insert message here*";
     }
     
+    
+    
+    
+    
+    
     registerBestPlay(bestPlay,message);
 }
