@@ -22,6 +22,8 @@ void decideHunterMove(HunterView gameState) {
         } else if (whereIs(gameState,id) == KLAUSENBURG) {
             bestPlay = "SZ";
         } else if (whereIs(gameState,id) == SZEGED) {
+            bestPlay = "BE";
+        } else if (whereIs(gameState,id) == BELGRADE) {
             bestPlay = "BC";
         } else if (whereIs(gameState,id) == BUCHAREST) {
             bestPlay = "GA";
