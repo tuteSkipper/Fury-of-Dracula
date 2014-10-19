@@ -1,0 +1,23 @@
+TARIEL AI STRATEGY
+
+Utilise messages: “_______”
+
+ - player letter embedded in random string of stuff
+ - whereCanTheyGo(hit_player)
+ 	- Hit_player should continue with randomly moving strategy
+	- First other Hunter AI should take whereCanTheyGo[2] (unless it does not exist - 	if next is NULL, counter does not increment). Use shortestPath to move towards 		this location, until destination is reached.
+	- Repeat for third Hunter AI but with whereCanTheyGo[3].
+	- PLAYER_SEDWARD should continue in his cycle.
+
+
+e.g. If Harker was hit at Belgrade
+“HTariel is amazing wooooooooooooooooBL”
+
+
+
+
+
+
+
+
+
