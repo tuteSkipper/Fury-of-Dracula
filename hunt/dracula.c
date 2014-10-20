@@ -37,22 +37,29 @@ void decideDraculaMove(DracView gameState)
         registerBestPlay(goToPlace,"Mwuhahahaha");
     } else {
         int size;
-        
+        int illegal = 0, dest;
+        LocationID myLoc = whereIs(gameState, PLAYER_DRACULA);
+        //printf ("A\n");
         LocationID *whereToGo = malloc(NUM_MAP_LOCATIONS);
         whereToGo = whereCanIgo(gameState, &size ,TRUE, FALSE);
-        if (size <= 1)
-        {
+        
+        
+        
+        /*} else */if (size < 1) {
             whereToGo = whereCanIgo(gameState, &size ,FALSE, TRUE);
-            if (size <= 1) {
+            
+            
+            if (size < 1) {
                 registerBestPlay("HI","Mwuhahahaha");
                 return;
             }
         }
-        int illegal = 0, dest;
+        //printf ("B\n");
+        
         while (illegal == 0)
         {
             int i = rand()%size;
-            if (i == 0)
+            if ((i == 0) && (whereToGo[i] == myLoc))
                 i++;
             
             dest = whereToGo[i];
@@ -77,8 +84,8 @@ static int isIllegal (DracView gameState, LocationID dest)
     //LocationID trail[TRAIL_SIZE];
     LocationID *trailLocs = malloc(sizeof(TRAIL_SIZE));
     giveMeTheTrail(gameState, PLAYER_DRACULA, trailLocs);
-    for (j = 1; j < TRAIL_SIZE; j++) {
-        printf("[%d] = %d\n", j, trailLocs[j]);
+    for (j = 0; j < TRAIL_SIZE; j++) {
+        //printf("[%d] = %d\n", j, trailLocs[j]);
         if (trailLocs[j] == dest) {
             return 0;
         }
