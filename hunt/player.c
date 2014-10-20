@@ -65,7 +65,14 @@ int main(int argc, char *argv[])
    // char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... GTO.... SKL.... HFR.... MMU.... DSR.... GBA....";
    // char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... GTO.... SKL.... HFR.... MMU.... DSR.... GBA.... SSZ....";
    // char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... GTO.... SKL.... HFR.... MMU.... DSR.... GBA.... SSZ.... HCO....";
- char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... GTO.... SKL.... HFR.... MMU.... DSR.... GBA.... SSZ.... HCO.... MMI....";
+   // char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... GTO.... SKL.... HFR.... MMU.... DSR.... GBA.... SSZ.... HCO.... MMI....";
+   // char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... GTO.... SKL.... HFR.... MMU.... DSR.... GBA.... SSZ.... HCO.... MMI.... DSZ....";
+   // char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... GTO.... SKL.... HFR.... MMU.... DSR.... GBA.... SSZ.... HCO.... MMI.... DSZ.... GBO.... SBE.... HBU.... MMR.... DBE....";
+   // char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... GTO.... SKL.... HFR.... MMU.... DSR.... GBA.... SSZ.... HCO.... MMI.... DSZ.... GBO.... SBE.... HBU.... MMR.... DBE.... GCF....";
+   // char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... GTO.... SKL.... HFR.... MMU.... DSR.... GBA.... SSZ.... HCO.... MMI.... DSZ.... GBO.... SBE.... HBU.... MMR.... DBE.... GCF.... SBC....";
+   // char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... GTO.... SKL.... HFR.... MMU.... DSR.... GBA.... SSZ.... HCO.... MMI.... DSZ.... GBO.... SBE.... HBU.... MMR.... DBE.... GCF.... SBC.... HAM....";
+   char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... GTO.... SKL.... HFR.... MMU.... DSR.... GBA.... SSZ.... HCO.... MMI.... DSZ.... GBO.... SBE.... HBU.... MMR.... DBE.... GCF.... SBC.... HAM.... MGO.... DBC....";
+
    PlayerMessage msgs[3] = { "", "", "" };
    gameState = newHunterView(plays,msgs);
    decideHunterMove(gameState);
