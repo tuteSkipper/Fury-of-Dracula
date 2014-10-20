@@ -3,11 +3,12 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "Game.h"
 #include "HunterView.h"
 
-static char *random (HunterView currentView, LocationID current, PlayerID hunter);
-static LocationID dest (LocationID encounter, int order);
+static char *randomDest (HunterView currentView, LocationID current, PlayerID hunter);
+static LocationID destination (LocationID encounter, int order);
 static char *sedwardMove(HunterView currentView);
 
 void decideHunterMove(HunterView gameState) {
@@ -30,6 +31,7 @@ void decideHunterMove(HunterView gameState) {
             prevPlayer = id - 1;
         }
         char *prevMessage = PlayerMessage[(round*NUM_PLAYERS)+prevPlayer];
+        int newHealth = howHealthyIs(gameState, prevPlayer);
         if (strncmp(prevMessage, dracEncounter, 17) == 0) {
             
             /* ALL HANDS ON DECK TO BE IMPLEMENT */
@@ -40,7 +42,7 @@ void decideHunterMove(HunterView gameState) {
             int prevHealth = (int)prevMessage[27];
             if (newHealth < prevHealth) {
                 LocationID encounter = whereIs(gameState, prevPlayer);
-                char abbrevEncounter[2] = idToAbbrev(encounter);
+                char *abbrevEncounter = idToAbbrev(encounter);
                 if (encounter == ST_JOSEPH_AND_ST_MARYS) {
                     // transported to hospital so need encounter location
                     abbrevEncounter = strndup(prevMessage+25,2);
@@ -50,14 +52,15 @@ void decideHunterMove(HunterView gameState) {
                 bestPlay = idToAbbrev(best);
                 char playerLetter;
                 if (prevPlayer == PLAYER_LORD_GODALMING) {
-                    playerLetter = "G";
+                    playerLetter = 'G';
                 } else if (prevPlayer == PLAYER_DR_SEWARD) {
-                    playerLetter = "S";
+                    playerLetter = 'S';
                 } else if (prevPlayer == PLAYER_VAN_HELSING) {
-                    playerLetter = "V";
+                    playerLetter = 'V';
                 } else if (prevPlayer == PLAYER_MINA_HARKER) {
-                    playerLetter = "M";
+                    playerLetter = 'M';
                 }
+
                 message = dracEncounter;
                 
                 
@@ -78,19 +81,19 @@ void decideHunterMove(HunterView gameState) {
                     if (whereIs(gameState,id) == UNKNOWN_LOCATION) {
                         bestPlay = "SR";
                     } else {
-                        bestPlay = random(gameState, whereIs(gameState,id), id);
+                        bestPlay = randomDest(gameState, whereIs(gameState,id), id);
                     }
                 } else if (id == PLAYER_VAN_HELSING) {
                     if (whereIs(gameState,id) == UNKNOWN_LOCATION) {
                         bestPlay = "HA";
                     } else {
-                        bestPlay = random(gameState, whereIs(gameState,id), id);
+                        bestPlay = randomDest(gameState, whereIs(gameState,id), id);
                     }
                 } else if (id == PLAYER_MINA_HARKER) {
                     if (whereIs(gameState,id) == UNKNOWN_LOCATION) {
                         bestPlay = "VE";
                     } else {
-                        bestPlay = random(gameState, whereIs(gameState,id), id);
+                        bestPlay = randomDest(gameState, whereIs(gameState,id), id);
                     }
                 }
                 message = healthCheck;
@@ -123,12 +126,12 @@ void decideHunterMove(HunterView gameState) {
 
 
 
-static char *random (HunterView currentView, LocationID current, PlayerID hunter) {
+static char *randomDest (HunterView gameState, LocationID current, PlayerID hunter) {
     int *numLocations = malloc(sizeof(int));
     char *dest = "";
     LocationID *connections = whereCanTheyGo(gameState, numLocations, hunter, TRUE, FALSE, TRUE);
     int counter = 0;
-    if (hunter == PLAYER_MINA_HARKER || hunter == PLAYER_VAN_HELSING) {
+    if ((hunter == PLAYER_MINA_HARKER)||(hunter == PLAYER_VAN_HELSING)) {
         LocationID next = UNKNOWN_LOCATION;
         LocationID highest = current;
         while (counter < numLocations[0]) {
@@ -169,7 +172,8 @@ static char *random (HunterView currentView, LocationID current, PlayerID hunter
 }
 
 
-static char *sedwardMove (HunterView currentView) {
+static char *sedwardMove (HunterView gameState) {
+    char *bestPlay;
     if (whereIs(gameState,id) == UNKNOWN_LOCATION) {
         bestPlay = "GA";
     } else if (whereIs(gameState,id) == ST_JOSEPH_AND_ST_MARYS) {
