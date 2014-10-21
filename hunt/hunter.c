@@ -37,7 +37,7 @@ void decideHunterMove(HunterView gameState) {
         } else {
             LocationID current = whereIs(gameState, id);
             int *numLocations = malloc(sizeof(int));
-            LocationID *connections = whereCanTheyGo(gameState, numLocations, id, TRUE, TRUE, TRUE);
+            LocationID *connections = whereCanTheyGo(gameState, numLocations, id, TRUE, FALSE, TRUE);
             int counter = 0;
             LocationID next = NUM_MAP_LOCATIONS;
             LocationID lowest = current;
@@ -64,7 +64,7 @@ void decideHunterMove(HunterView gameState) {
         } else {
             LocationID current = whereIs(gameState, id);
             int *numLocations = malloc(sizeof(int));
-            LocationID *connections = whereCanTheyGo(gameState, numLocations, id, TRUE, TRUE, TRUE);
+            LocationID *connections = whereCanTheyGo(gameState, numLocations, id, TRUE, FALSE, TRUE);
             int counter = 0;
             LocationID next = UNKNOWN_LOCATION;
             LocationID highest = current;
@@ -91,7 +91,7 @@ void decideHunterMove(HunterView gameState) {
         } else {
             LocationID current = whereIs(gameState, id);
             int *numLocations = malloc(sizeof(int));
-            LocationID *connections = whereCanTheyGo(gameState, numLocations, id, TRUE, TRUE, TRUE);
+            LocationID *connections = whereCanTheyGo(gameState, numLocations, id, TRUE, FALSE, TRUE);
             int counter = 0;
             LocationID next = UNKNOWN_LOCATION;
             LocationID highest = current;
