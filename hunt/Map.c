@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include "Map.h"
 #include "Places.h"
+#include "Queue.h"
 
 typedef struct vNode *VList;
 
@@ -160,6 +161,77 @@ int numE(Map g, TransportID type)
 int  getDist(Map g, TransportID t, LocationID a, LocationID b) {
     return g->adjmat[t][a][b];
 }
+
+
+int shortestPath(Map g, LocationID start, LocationID end, LocationID path[], TransportID trans[]){
+    assert((g != NULL) && (validPlace(start)) && validPlace(end));
+    VList curr;
+    // case 0: going to itself
+    if (start == end)
+        return 0;
+    // case 1: if there is a direct connection
+    for (curr = g->connections[start]; curr->next != NULL; curr = curr->next) {
+        if (curr->v == end) {
+            path[0] = start;
+            trans[0] = ANY;
+            path[1] = end;
+            trans[1] = curr->type;
+            return 2;
+        }
+    }
+    // case 2: no direct connection
+    Queue q = newQueue();
+    QueueJoin(q, start);
+    int *visited = calloc(g->nV, sizeof(int));
+    int *st = calloc(g->nV, sizeof(int));
+    int x,cnt = 0;
+    while (!QueueIsEmpty(q)) {
+        x = QueueLeave(q);
+        if (visited[x]) continue;
+        visited[x] = cnt++;
+        if (g->connections[x] == NULL) {
+            x = 0;
+        } else {
+            for (curr = g->connections[x]; curr != NULL; curr = curr->next) {
+                if (st[curr->v] == 0 && curr->v != start) {
+                    QueueJoin(q, curr->v);
+                    st[curr->v] = x;
+                }
+            }
+        }
+    }
+    int i = 1;
+    for (x = end; x != start; x = st[x]) {
+        if (st[x] != start) {
+            path[i] = st[x];
+            for (curr = g->connections[x]; curr->v != st[x]; curr = curr->next);
+            trans[i] = curr->type;
+            i++;
+        }
+    }
+    trans[i] = curr->type;
+    int temp = 0, counter = i;
+    for (x = 0; x < i; x++) {
+        temp    = path[x];
+        path[x]= path[i];
+        path[i]= temp;
+        i--;
+    }
+    i = counter;
+    for (x = 1; x < i; x++) {
+        temp    = trans[x];
+        trans[x]= trans[i];
+        trans[i]= temp;
+        i--;
+    }
+    path[0] = start;
+    trans[0] = ANY;
+    path[counter++] = end;
+    free(st);
+    free(visited);
+    return counter;
+}
+
 
 // Add edges to Graph representing map of Europe
 static void addConnections(Map g)

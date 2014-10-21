@@ -6,6 +6,7 @@
 #include <time.h> //random number
 #include "Game.h"
 #include "DracView.h"
+#include "Map.h"
 
 static int isIllegal (DracView gameState, LocationID dest);
 
@@ -71,9 +72,36 @@ void decideDraculaMove(DracView gameState)
         
     }
     
-    //  if (howHealthyIs(gameState, PLAYER_DRACULA) <= 10){
-    //registerBestPlay("CD","Mwuhahahaha");
-    //  }
+        if (howHealthyIs(gameState, PLAYER_DRACULA) <= 20){
+            Map theMap;
+            theMap = newMap();
+            
+            int i, n;
+            LocationID path[NUM_MAP_LOCATIONS];
+            TransportID trans[NUM_MAP_LOCATIONS];
+            
+            int currLocationfForDrac = whereIs(gameState, PLAYER_DRACULA);
+            n = shortestPath(theMap, currLocationfForDrac, CASTLE_DRACULA, path, trans);
+            
+            if (n == 0) {
+                //cant reach
+            } else {
+                i = 1;
+                
+                registerBestPlay(idToAbbrev(path[i]),"Mwuhahahaha");
+                /*
+                for (i = 1; i < n ; i++){
+                    if (i > 1 && n > 2) printf("then ");
+                    printf("go to %s by ", idToName(path[i]));
+                    switch (trans[i]) {
+                        case ROAD: printf("road\n"); break;
+                        case RAIL: printf("rail\n"); break;
+                        case BOAT: printf("boat\n"); break;
+                        default:   printf("????\n"); break;
+                    }
+                 */
+                }
+        }
     
     //registerBestPlay("CD","Mwuhahahaha");
 }

@@ -28,4 +28,6 @@ int  numE(Map g, TransportID t);
 // or NO_EDGE if no such edge exists
 int  getDist(Map g, TransportID t, int a, int b);
 
+int shortestPath(Map g, LocationID start, LocationID end, LocationID path[], TransportID trans[]);
+
 #endif
