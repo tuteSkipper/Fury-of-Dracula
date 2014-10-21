@@ -10,7 +10,7 @@
 typedef int Item;
 
 #define ItemCopy(i)     (i)
-#define ItemShow(i)     printf("(%d,%d: %d)",(i).start,(i).end,(i).type)
+#define ItemShow(i)     printf("(%d)",i)
 
 #endif
 
