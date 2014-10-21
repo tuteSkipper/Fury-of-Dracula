@@ -9,10 +9,10 @@
 typedef struct QueueRep *Queue;
 
 Queue newQueue(); // create new empty queue
-void dropQueue(Queue); // free memory used by queue
-void showQueue(Queue); // display as 3 > 5 > 4 > ...
-void QueueJoin(Queue,Item); // add item on queue
-Item QueueLeave(Queue); // remove item from queue
-int QueueIsEmpty(Queue); // check for no items
+void dropQueue(Queue q); // free memory used by queue
+void showQueue(Queue q); // display as 3 > 5 > 4 > ...
+void QueueJoin(Queue q, Item i); // add item on queue
+Item QueueLeave(Queue q); // remove item from queue
+int QueueIsEmpty(Queue q); // check for no items
 
 #endif

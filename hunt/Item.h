@@ -6,8 +6,8 @@
 
 #include "Map.h"
 
-typedef Edge Item;
-//typedef int Item;
+//typedef Edge Item;
+typedef int Item;
 
 #define ItemCopy(i)     (i)
 #define ItemShow(i)     printf("(%d,%d: %d)",(i).start,(i).end,(i).type)
