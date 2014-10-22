@@ -84,7 +84,7 @@ void decideHunterMove(HunterView gameState) {
             }
             free(numLocations);
         }
-        message = "*insert message here*";
+        message = "HELSING";
     } else if (id == PLAYER_MINA_HARKER) {
         if (whereIs(gameState,id) == UNKNOWN_LOCATION) {
             bestPlay = "VE";
@@ -111,7 +111,7 @@ void decideHunterMove(HunterView gameState) {
             }
             free(numLocations);
         }
-        message = "*insert message here*";
+        message = "HARKER";
     }
     
     

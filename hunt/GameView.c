@@ -484,6 +484,9 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
     assert(currentView != NULL);
     assert(numLocations != NULL);
     assert(validPlace(from));
+    printf("%d\n", player);
+    player = getCurrentPlayer(currentView);
+    printf("%d\n", player);
     assert(0 <= player && player < NUM_PLAYERS);
     
     int i, j, k;
