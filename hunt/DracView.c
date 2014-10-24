@@ -317,7 +317,8 @@ LocationID *whereCanIgo(DracView currentView, int *numLocations, int road, int s
     LocationID *out = 
         (LocationID *)(malloc(sizeof(LocationID) * NUM_MAP_LOCATIONS));
     assert(out != NULL);
-
+    for (i=0; i<NUM_MAP_LOCATIONS; i++)
+        out[i] = -1;
     (*numLocations) = 0;
 
     // check if first round
