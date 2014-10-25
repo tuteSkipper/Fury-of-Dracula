@@ -46,7 +46,11 @@ void decideDraculaMove(DracView gameState)
             LocationID myLoc = whereIs(gameState, PLAYER_DRACULA);
             int currLocationfForDrac = whereIs(gameState, PLAYER_DRACULA);
             n = shortestPath(theMap, currLocationfForDrac, CASTLE_DRACULA, path, trans);
-            
+        
+            int size, dest;
+            LocationID *whereToGo = malloc(NUM_MAP_LOCATIONS);
+            whereToGo = whereCanIgo(gameState, &size ,TRUE, TRUE);
+        
             if (n == 0) {
                 //cant reach
             } else {
