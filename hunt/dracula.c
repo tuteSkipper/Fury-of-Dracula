@@ -35,7 +35,7 @@ void decideDraculaMove(DracView gameState)
             }
         }
         char *goToPlace = idToAbbrev(r);
-        registerBestPlay(goToPlace,"Mwuhahahaha");
+        registerBestPlay(goToPlace,"MwuhahahahaHEREICOME");
     } else if (howHealthyIs(gameState, PLAYER_DRACULA) <= 20){
             Map theMap;
             theMap = newMap();
@@ -66,9 +66,9 @@ void decideDraculaMove(DracView gameState)
                         illegal = isIllegal(gameState, dest);
                     }
                     char *goToPlace = idToAbbrev(dest);
-                    registerBestPlay(goToPlace,"Mwuhahahaha");
+                    registerBestPlay(goToPlace,"MwuhahahahaRUN");
                 } else {
-                    registerBestPlay(idToAbbrev(path[i]),"Mwuhahahaha");
+                    registerBestPlay(idToAbbrev(path[i]),"MwuhahahahaRUN1");
                 }
                 
                 /*
@@ -97,7 +97,7 @@ void decideDraculaMove(DracView gameState)
             
             
             if (size < 1) {
-                registerBestPlay("HI","Mwuhahahaha");
+                registerBestPlay("HI","MwuhahahahaCANNOTFINDME");
                 return;
             }
         }
