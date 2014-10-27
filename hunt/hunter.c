@@ -6,75 +6,133 @@
 #include <string.h>
 #include "Game.h"
 #include "HunterView.h"
+#include "Map.h"
+
+#define NUM_HUNTERS 4
 
 static char *randomDest (HunterView currentView, LocationID current, PlayerID hunter);
-static LocationID destination (HunterView gameState, LocationID encounter, int order, PlayerID hunter);
 static char *sedwardMove(HunterView currentView);
+static char *dracEncounter (HunterView currentView, LocationID encounter, PlayerID hunter int order);
 
 void decideHunterMove(HunterView gameState) {
     char *bestPlay = "";
     char *message = "";
     
-    char *healthCheck = "Our lives are not our own"; //final byte for prevPlayer's initial health
-    char *dracEncounter = "All hands on deck"; //
-    
     PlayerID id = whoAmI(gameState);
     int health = howHealthyIs(gameState, id);
     int round = giveMeTheRound(gameState);
     
-    if (round > 0) {
-        PlayerID prevPlayer;
-        if (id == PLAYER_LORD_GODALMING) {
-            prevPlayer = PLAYER_MINA_HARKER;
-        } else {
-            prevPlayer = id - 1;
-        }
+    // Each play is allocated 3 bytes for their memory:
+    // 1: First letter of their locations abbrev
+    // 2: Health points in the beginning of their turn
+    // 3: Second letter of their location abbrev
+    // UNLESS trap/drac was encountered, then message is 6 bytes long
+    // 4: First letter of encounter abbrev
+    // 5: Second letter of encounter abbrev
+    // 6: Who was attacked (e.g. if Helsing was attacked, Harker is n = 1, Goldalming, n = 2
+    // Seward, n = 3 and Helsing is n = 4).
 
-        char *prevMessage = PlayerMessage[(round*NUM_PLAYERS)+prevPlayer];
-        int newHealth = howHealthyIs(gameState, prevPlayer);
-        if (strncmp(prevMessage, dracEncounter, 17) == 0) {
-            
-            /* ALL HANDS ON DECK TO BE IMPLEMENT */
-            
-            
+    
+    // After each hunter has gone through a 'D' turn, it changes in to an 'H' turn next round
+    
+    if (round > 0 && id != PLAYER_DR_SEWARD) {
+        char *lastRoundMessage = PlayerMessage[((round-1)*NUM_PLAYERS)+id];
         
-        } else if (strncmp(prevMessage, healthCheck, 25) == 0) {
-            int prevHealth = (int)prevMessage[27];
-            if (newHealth < prevHealth) {
-                LocationID encounter = whereIs(gameState, prevPlayer);
-                char *abbrevEncounter = idToAbbrev(encounter);
-                if (encounter == ST_JOSEPH_AND_ST_MARYS) {
-                    // transported to hospital so need encounter location
-                    abbrevEncounter = strndup(prevMessage+25,2);
-                    encounter = abbrevToID(abbrevEncounter);
-                }
-                LocationID best = destination(gameState, encounter, 0, prevPlayer);
-                bestPlay = idToAbbrev(best);
-                char playerLetter;
-                if (prevPlayer == PLAYER_LORD_GODALMING) {
-                    playerLetter = 'G';
-                } else if (prevPlayer == PLAYER_DR_SEWARD) {
-                    playerLetter = 'S';
-                } else if (prevPlayer == PLAYER_VAN_HELSING) {
-                    playerLetter = 'V';
-                } else if (prevPlayer == PLAYER_MINA_HARKER) {
-                    playerLetter = 'M';
-                }
-
-                message = dracEncounter;
-                
-                
-                
-                
-                /* MUST WORK OUT HOW TO OVERCOME ISSUE IF
-                 HUNTER THAT ENCOUNTERED TRAP/DRACULA BUT
-                 IS INSTEAD AT HOSPITAL*/
-                
-                
-                
-                
-                //strcat(message, goal);
+        if (lastRoundMessage[1] == "H" || lastRoundMessage[1] == "D") { // hunt is ON - go towards place in string
+            
+            /* When hunt is on, our destination should be stored in via messages
+             and retrieved by looking at prev round message.
+             Only when destination is reached should random moves return and
+             1st/3rd byte of player's message return to their bestPlay abbrev.
+             */
+            
+            char *destination = lastRoundMessage[0];
+            strcat(destination, lastRoundMessage[2]);
+            lastRoundMessage[1] = "H";
+            lastRoundMessage[3] = '\0';
+            LocationID encounterLoc = abbrevToID(destination);
+            LocationID current = whereIs(gameState, id);
+            if (current == encounterLoc) {
+                // if reached dest, return to random moves - shouldn't enter but extra precaution
+                bestPlay = randomDest(gameState, current, id);
+                message = bestPlay[0];
+                strcat(message, health);
+                strcat(message, bestPlay[1]);
             } else {
+                // still on path towards dest
+                Map g = newMap();
+                LocationID path[NUM_LOCATIONS];
+                TransportID trans[NUM_LOCATIONS];
+                shortestPath(g, current, encounterLoc, path, trans);
+                int railDist = getDist(g, RAIL, current, encounterLoc); // length of any direct rail connections to dest
+                int railMove = (round + id) % NUM_HUNTERS; // max. no of steps by rail
+                
+                if (trans[1] == RAIL && railMove == 0) {
+                    // if next dest is illegal RAIL move, rest until next turn
+                    bestPlay = idToAbbrev(current);
+                    message = lastRoundMessage;
+                } else if ((railDist == 2 && railMove >= 2) || (railDist == 3 && railMove == 3)) {
+                    // take two or three rail moves to get to dest if legal
+                    message = destination[0];
+                    strcat(message, health);
+                    strcat(message, destination[1]);
+                    bestPlay = destination;
+                } else {
+                    bestPlay = idToAbbrev(path[1]);
+                    /*message = destination[0];
+                    strcat(message, "H");
+                    strcat(message, destination[1]);*/
+                    if (bestPlay == destination) {
+                        message = destination[0];
+                        strcat(message, health);
+                        strcat(message, destination[1]);
+                    } else {
+                        message = lastRoundMessage;
+                    }
+                }
+                disposeMap(g);
+            }
+        } else {
+            PlayerID prevPlayer;
+            if (id == PLAYER_LORD_GODALMING) {
+                prevPlayer = PLAYER_MINA_HARKER;
+            } else {
+                prevPlayer = id - 1;
+            }
+            char *prevHuntMessage = PlayerMessage[(round*NUM_PLAYERS)+prevPlayer];
+            int newHealth = howHealthyIs(gameState, prevPlayer);
+            
+            if (prevHuntMessage[1] == "D") {
+                char *encounter = prevHuntMessage[3];
+                strcat(encounter, prevHuntMessage[4]);
+                LocationID encounterID = abbrevToID(encounter);
+                bestPlay = dracEncounter(gameState, encounterID, id, ((int)prevHuntMessage[5] + 1));
+                
+                
+            }
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+        }
+        
+        
+        
+        
+        
+        
+        
+        
+        
+
+           /*8 } else {
                 if (id == PLAYER_DR_SEWARD) {
                     bestPlay = sedwardMove(gameState);
                 } else if (id == PLAYER_LORD_GODALMING) {
@@ -99,23 +157,44 @@ void decideHunterMove(HunterView gameState) {
                 message = healthCheck;
                 strcat(message, (char)(health));
             }
+        }*/
+    } else if (round > 0 && id == PLAYER_DR_SEWARD) {
+        bestPlay = sedwardMove(gameState);
+        char *GDmessage = PlayerMessage[((round-1)*NUM_PLAYERS)];
+        int GDhealth = howHealthyIs(gameState, PLAYER_LORD_GODALMING)
+        if (GDmessage[1] == "D") { // During a 'D' round (a hunter lost health in that round)
+            int order = (int)GDmessage[5] + 1;
+            message = GDmessage;
+            message[5] = order;
+        } else if (GDmessage[1] != "H" && GDhealth < (int)GDmessage[1]) { // GOLDALMING lost health
+            message[0] = bestPlay[0];
+            message[1] = "D";
+            message[2] = bestPlay[1];
+            message[3] = GDmessage[0];
+            message[4] = GDmessage[2];
+            message[5] = 1;
+        } else { // random move
+            message[0] = bestPlay[0];
+            message[1] = health;
+            message[2] = bestPlay[1];
         }
     } else {
-        if (id == PLAYER_DR_SEWARD) {
-            bestPlay = "GA";
-        } else if (id == PLAYER_LORD_GODALMING) {
+        if (id == PLAYER_LORD_GODALMING) {
             bestPlay = "SR";
+        } else if (id == PLAYER_DR_SEWARD) {
+            bestPlay = "GA";
         } else if (id == PLAYER_VAN_HELSING) {
             bestPlay = "HA";
         } else if (id == PLAYER_MINA_HARKER) {
             bestPlay = "VE";
         }
-        message = healthCheck;
-        strcat(message, bestPlay); // better way of passing location that is more secure??
-        strcat(message, (char)(health));
+        message[0] = bestPlay[0];
+        message[1] = health;
+        message[2] = bestPlay[1];
     }
 
-    registerBestPlay(bestPlay,message);
+
+    registerbestPlay(bestPlay,message);
 }
 
 
@@ -199,16 +278,22 @@ static char *sedwardMove (HunterView gameState) {
 
 
 
-static LocationID destination (HunterView gameState, LocationID encounter, int order, PlayerID hunter) {
+
+static char *dracEncounter (HunterView currentView, LocationID encounter, PlayerID hunter, int order) {
     int *numLocations = malloc(sizeof(int));
-    // char *dest = "";
-    LocationID *connections = whereCanTheyGo(gameState, numLocations, hunter, TRUE, FALSE, TRUE);
+    char *dest = "";
+    order--;
+    
+    LocationID *connections = whereCanTheyGo(currentView, numLocations, hunter, TRUE, FALSE, TRUE);
     if (order >= numLocations[0]) {
         order = numLocations[0] - 1;
     }
     
-    // dest = connections[order];
+    LocationID destination = connections[order];
+    dest = idToAbbrev(destination);
+    
     free(numLocations);
     
-    return connections[order];
+    
+    return dest;
 }
