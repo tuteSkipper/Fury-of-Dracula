@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
    // char *plays = "GZA....";
    // char *plays = "GZA.... SED....";
    // char *plays = "GZA.... SED.... HZU....";
-   // char *plays = "GSR.... SCD.... HHA.... MVE.... DCD....";
+   char *plays = "GSR.... SCD.... HHA.... MVE.... DCD....";
    // char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... GTO....";
    // char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... GTO.... SKL....";
    // char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... GTO.... SKL.... HFR....";
@@ -73,16 +73,16 @@ int main(int argc, char *argv[])
    // char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... GTO.... SKL.... HFR.... MMU.... DSR.... GBA.... SSZ.... HCO.... MMI.... DSZ.... GBO.... SBE.... HBU.... MMR.... DBE.... GCF.... SBC.... HAM....";
    // char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... GTO.... SKL.... HFR.... MMU.... DSR.... GBA.... SSZ.... HCO.... MMI.... DSZ.... GBO.... SBE.... HBU.... MMR.... DBE.... GCF.... SBC.... HAM.... MGO.... DBC....";
 
-   char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... "
-                 "GTO.... SKL.... HFR.... MMU.... DSR.... "
-                 "GBA.... SSZ.... HCO.... MMI.... DSZ.... "
-                 "GBO.... SBE.... HBU.... MMR.... DBE.... "
-                 "GCF.... SBC.... HAM.... MGO.... DBC.... "
-                 "GGE.... SGA.... HNS.... MHL.... DGA.... "
-                 "GMR.... SCD.... HHA.... MVE.... DCD.... "
-                 "GMS.... SKL.... HCO.... MMU.... DKL.... "
-                 "GTS.... SSZ.... HBU.... MMI.... DSZ.... "
-                 "GCG.... SBE.... HAM....";
+   // char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... "
+   //               "GTO.... SKL.... HFR.... MMU.... DSR.... "
+   //               "GBA.... SSZ.... HCO.... MMI.... DSZ.... "
+   //               "GBO.... SBE.... HBU.... MMR.... DBE.... "
+   //               "GCF.... SBC.... HAM.... MGO.... DBC.... "
+   //               "GGE.... SGA.... HNS.... MHL.... DGA.... "
+   //               "GMR.... SCD.... HHA.... MVE.... DCD.... "
+   //               "GMS.... SKL.... HCO.... MMU.... DKL.... "
+   //               "GTS.... SSZ.... HBU.... MMI.... DSZ.... "
+   //               "GCG.... SBE.... HAM....";
 
    PlayerMessage msgs[3] = { "", "", "" };
    gameState = newHunterView(plays,msgs);
