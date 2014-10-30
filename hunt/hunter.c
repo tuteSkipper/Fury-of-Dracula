@@ -13,11 +13,7 @@
 
 static char *randomDest (HunterView currentView, LocationID current, PlayerID hunter);
 static char *sedwardMove(HunterView currentView);
-<<<<<<< Updated upstream
-static char *dracEncounter (HunterView currentView, LocationID encounter, PlayerID hunter, int order);
-=======
 static char *dracEncounter (HunterView currentView, LocationID encounter, PlayerID hitHunter, int order);
->>>>>>> Stashed changes
 
 void decideHunterMove(HunterView gameState) {
     char *bestPlay = "";
@@ -108,11 +104,6 @@ void decideHunterMove(HunterView gameState) {
             char *prevHuntMessage = gameState->messages[(round*NUM_PLAYERS)+prevPlayer];
             int newHealth = howHealthyIs(gameState, prevPlayer);
             
-<<<<<<< Updated upstream
-            if (prevHuntMessage[1] == 'D') {
-                char *encounter = &prevHuntMessage[3];
-                strcat(encounter, &prevHuntMessage[4]);
-=======
             if (prevHuntMessage[1] == "D") {
                 // 1. Check if curr. player was the one who intially lost health - no need to hunt
                 // far unless at hospital
@@ -201,7 +192,6 @@ void decideHunterMove(HunterView gameState) {
                 
                 char *encounter = prevHuntMessage[3];
                 strcat(encounter, prevHuntMessage[4]);
->>>>>>> Stashed changes
                 LocationID encounterID = abbrevToID(encounter);
                 bestPlay = dracEncounter(gameState, encounterID, id, ((int)prevHuntMessage[5] + 1));
                 
@@ -234,11 +224,9 @@ void decideHunterMove(HunterView gameState) {
         int GDhealth = howHealthyIs(gameState, PLAYER_LORD_GODALMING);
         if (GDmessage[1] == 'D') { // During a 'D' round (a hunter lost health in that round)
             int order = (int)GDmessage[5] + 1;
-<<<<<<< Updated upstream
             message = GDmessage;
             message[5] = order;
         } else if (GDmessage[1] != 'H' && GDhealth < (int)GDmessage[1]) { // GOLDALMING lost health
-=======
             if (order > 3) { // Sedward was one who lost health initially
                 message[0] = bestPlay[0];
                 message[1] = health;
@@ -249,19 +237,6 @@ void decideHunterMove(HunterView gameState) {
                 message[2] = bestPlay[1];
                 message[5] = order;
             }
-        } else if (GDmessage[1] != "H" && GDhealth < (int)GDmessage[1]) { // GOLDALMING lost health
->>>>>>> Stashed changes
-            message[0] = bestPlay[0];
-            message[1] = 'D';
-            message[2] = bestPlay[1];
-            message[3] = GDmessage[0];
-            message[4] = GDmessage[2];
-            message[5] = 1;
-        } else { // random move
-            message[0] = bestPlay[0];
-            message[1] = health;
-            message[2] = bestPlay[1];
-        }
     } else {
         if (id == PLAYER_LORD_GODALMING) {
             bestPlay = "SR";
