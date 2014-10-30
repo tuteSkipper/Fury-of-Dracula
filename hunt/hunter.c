@@ -63,7 +63,7 @@ void decideHunterMove(HunterView gameState) {
     // After each hunter has gone through a 'D' turn, it changes in to an 'H' turn next round
     
     if (round > 0 && id != PLAYER_DR_SEWARD) {
-        char *lastRoundMessage;
+        char *lastRoundMessage = NULL;
         strncpy(lastRoundMessage, (char *) &(gameState->g->messages[((round-1)*NUM_PLAYERS)+id]), MAX_MESSAGE_LENGTH);
         //^gotta strncpy this later
         if (lastRoundMessage[1] == 'H' || lastRoundMessage[1] == 'D') { // hunt is ON - go towards place in string
@@ -118,7 +118,7 @@ void decideHunterMove(HunterView gameState) {
                         message = lastRoundMessage;
                     }
                 }
-                disposeMap(g);
+                //disposeMap(g);
             }
         } else {
             PlayerID prevPlayer;
@@ -128,7 +128,7 @@ void decideHunterMove(HunterView gameState) {
                 prevPlayer = id - 1;
             }
             char *prevHuntMessage = gameState->g->messages[(round*NUM_PLAYERS)+prevPlayer];
-            int newHealth = howHealthyIs(gameState, prevPlayer);
+            //int newHealth = howHealthyIs(gameState, prevPlayer);
             
             if (prevHuntMessage[1] == 'D') {
                 // 1. Check if curr. player was the one who intially lost health - no need to hunt
@@ -168,6 +168,7 @@ void decideHunterMove(HunterView gameState) {
                             }
                             strcat(message, &prevLocation[1]);
                         }
+                        //disposeMap(g);
                     } else {
                         // continue on with random moves
                         bestPlay = randomDest(gameState, currLoc, id);
@@ -185,17 +186,28 @@ void decideHunterMove(HunterView gameState) {
                         }
                         tempOrder--;
                     }
-                    Map g = newMap();
-                    LocationID path[NUM_MAP_LOCATIONS];
-                    TransportID trans[NUM_MAP_LOCATIONS];
-                    shortestPath(g, currLoc, encounterLoc, path, trans);
                     LocationID hitCurrLoc = whereIs(gameState, hitHunter);
                     if (hitCurrLoc == ST_JOSEPH_AND_ST_MARYS) {
-                        char *hitString = gameview->messages[((round-1)*NUM_PLAYERS)+id-order];
-                        char *destination = &hitString[0];
-                        strcat(destination, &hitString[2]);
+                        char *hitString = gameState->g->messages[((round-1)*NUM_PLAYERS)+id-order];
+                        char *encountName = &hitString[0];
+                        strcat(encountName, &hitString[2]);
+                        LocationID encounterLoc = abbrevToID(encountName);
+                        LocationID currLoc = whereIs(gameState, id);
+                        Map g = newMap();
+                        LocationID path[NUM_MAP_LOCATIONS];
+                        TransportID trans[NUM_MAP_LOCATIONS];
+                        shortestPath(g, currLoc, encounterLoc, path, trans);
+                        
+                        if (trans[1] == RAIL && (round + id) % NUM_HUNTERS == 0) {
+                            // if next dest is illegal RAIL move, rest until next turn
+                            bestPlay = idToAbbrev(currLoc);
+                        } else {
+                            bestPlay = idToAbbrev(path[1]);
+                        }
+                        message = &encountName[0];
+                        strcat(message, "H");
+                        strcat(message, &encountName[1]);
                     }
-                    
                     
                 }
                 
@@ -224,13 +236,6 @@ void decideHunterMove(HunterView gameState) {
             
         }
         
-        
-        
-        
-        
-        
-        
-        
     
     } else if (round > 0 && id == PLAYER_DR_SEWARD) {
         bestPlay = sedwardMove(gameState);
@@ -251,6 +256,7 @@ void decideHunterMove(HunterView gameState) {
                 message[2] = bestPlay[1];
                 message[5] = order;
             }
+        }
     } else {
         if (id == PLAYER_LORD_GODALMING) {
             bestPlay = "SR";
@@ -267,7 +273,7 @@ void decideHunterMove(HunterView gameState) {
     }
 
 
-    registerbestPlay(bestPlay,message);
+    registerBestPlay(bestPlay,message);
 }
 
 
@@ -281,7 +287,7 @@ void decideHunterMove(HunterView gameState) {
 static char *randomDest (HunterView currentView, LocationID current, PlayerID hunter) {
     int *numLocations = malloc(sizeof(int));
     char *dest = "";
-    LocationID *connections = whereCanTheyGo(gameState, numLocations, hunter, TRUE, FALSE, TRUE);
+    LocationID *connections = whereCanTheyGo(currentView, numLocations, hunter, TRUE, FALSE, TRUE);
     int counter = 0;
     if ((hunter == PLAYER_MINA_HARKER)||(hunter == PLAYER_VAN_HELSING)) {
         LocationID next = UNKNOWN_LOCATION;
@@ -325,24 +331,24 @@ static char *randomDest (HunterView currentView, LocationID current, PlayerID hu
 
 
 static char *sedwardMove (HunterView currentView) {
-    char *bestPlay;
-    PlayerID id = whoAmI(gameState);
+    char *bestPlay = NULL;
+    PlayerID id = whoAmI(currentView);
     
-    if (whereIs(gameState,id) == UNKNOWN_LOCATION) {
+    if (whereIs(currentView,id) == UNKNOWN_LOCATION) {
         bestPlay = "GA";
-    } else if (whereIs(gameState,id) == ST_JOSEPH_AND_ST_MARYS) {
+    } else if (whereIs(currentView,id) == ST_JOSEPH_AND_ST_MARYS) {
         bestPlay = "SZ";
-    } else if (whereIs(gameState,id) == CASTLE_DRACULA) {
+    } else if (whereIs(currentView,id) == CASTLE_DRACULA) {
         bestPlay = "KL";
-    } else if (whereIs(gameState,id) == KLAUSENBURG) {
+    } else if (whereIs(currentView,id) == KLAUSENBURG) {
         bestPlay = "SZ";
-    } else if (whereIs(gameState,id) == SZEGED) {
+    } else if (whereIs(currentView,id) == SZEGED) {
         bestPlay = "BE";
-    } else if (whereIs(gameState,id) == BELGRADE) {
+    } else if (whereIs(currentView,id) == BELGRADE) {
         bestPlay = "BC";
-    } else if (whereIs(gameState,id) == BUCHAREST) {
+    } else if (whereIs(currentView,id) == BUCHAREST) {
         bestPlay = "GA";
-    } else if (whereIs(gameState,id) == GALATZ) {
+    } else if (whereIs(currentView,id) == GALATZ) {
         bestPlay = "CD";
     }
     
@@ -355,7 +361,7 @@ static char *dracEncounter (HunterView currentView, LocationID encounter, Player
     char *dest = "";
     order -= 1;
     
-    LocationID *connections = whereCanTheyGo(gameState, numLocations, hunter, TRUE, FALSE, TRUE);
+    LocationID *connections = whereCanTheyGo(currentView, numLocations, hitHunter, TRUE, FALSE, TRUE);
     if (order >= numLocations[0]) {
         order = numLocations[0] - 1;
     }
