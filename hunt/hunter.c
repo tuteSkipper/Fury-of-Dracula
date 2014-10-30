@@ -5,15 +5,41 @@
 #include <stdio.h>
 #include <string.h>
 #include "Game.h"
+#include "GameView.h"
 #include "HunterView.h"
 #include "Map.h"
 
 #define NUM_HUNTERS 4
 #define MAX_MESSAGE_LENGTH (MESSAGE_SIZE+10)
+#define MAX_PLAYS (366*5+5+10)
 
 static char *randomDest (HunterView currentView, LocationID current, PlayerID hunter);
 static char *sedwardMove(HunterView currentView);
 static char *dracEncounter (HunterView currentView, LocationID encounter, PlayerID hitHunter, int order);
+
+typedef struct _player {
+    int health;
+    LocationID position;
+} player;
+
+struct gameView {
+    player players[NUM_PLAYERS];
+
+    // dracula's trail; most recent last
+    LocationID trail[TRAIL_SIZE];
+    char *messages[MAX_PLAYS];
+    char *pastPlays;
+    int score;
+    int turns;
+};
+
+struct hunterView {
+    GameView g;
+    
+    // Dracula's last TRAIL_SIZE _locations_; NOT moves in REVERSE
+    // chronological order [as best as we know]
+    LocationID trailLocs[TRAIL_SIZE];
+};
 
 void decideHunterMove(HunterView gameState) {
     char *bestPlay = "";
@@ -38,7 +64,7 @@ void decideHunterMove(HunterView gameState) {
     
     if (round > 0 && id != PLAYER_DR_SEWARD) {
         char *lastRoundMessage;
-        strncpy(lastRoundMessage, gameState->messages[((round-1)*NUM_PLAYERS)+id], MAX_MESSAGE_LENGTH);
+        strncpy(lastRoundMessage, (char *) &(gameState->g->messages[((round-1)*NUM_PLAYERS)+id]), MAX_MESSAGE_LENGTH);
         //^gotta strncpy this later
         if (lastRoundMessage[1] == 'H' || lastRoundMessage[1] == 'D') { // hunt is ON - go towards place in string
             
@@ -101,7 +127,7 @@ void decideHunterMove(HunterView gameState) {
             } else {
                 prevPlayer = id - 1;
             }
-            char *prevHuntMessage = gameState->messages[(round*NUM_PLAYERS)+prevPlayer];
+            char *prevHuntMessage = gameState->g->messages[(round*NUM_PLAYERS)+prevPlayer];
             int newHealth = howHealthyIs(gameState, prevPlayer);
             
             if (prevHuntMessage[1] == 'D') {
@@ -208,7 +234,7 @@ void decideHunterMove(HunterView gameState) {
     
     } else if (round > 0 && id == PLAYER_DR_SEWARD) {
         bestPlay = sedwardMove(gameState);
-        char *GDmessage = gameState->messages[((round-1)*NUM_PLAYERS)];
+        char *GDmessage = gameState->g->messages[((round-1)*NUM_PLAYERS)];
         int GDhealth = howHealthyIs(gameState, PLAYER_LORD_GODALMING);
         int order = (int)GDmessage[5] + 1;
         if (GDmessage[1] == 'D') { // During a 'D' round (a hunter lost health in that round)
