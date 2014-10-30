@@ -104,7 +104,7 @@ void decideHunterMove(HunterView gameState) {
             char *prevHuntMessage = gameState->messages[(round*NUM_PLAYERS)+prevPlayer];
             int newHealth = howHealthyIs(gameState, prevPlayer);
             
-            if (prevHuntMessage[1] == "D") {
+            if (prevHuntMessage[1] == 'D') {
                 // 1. Check if curr. player was the one who intially lost health - no need to hunt
                 // far unless at hospital
                 int order = (int)prevHuntMessage[5] + 1;
@@ -112,8 +112,8 @@ void decideHunterMove(HunterView gameState) {
                     LocationID currLoc = whereIs(gameState, id);
                     if (currLoc == ST_JOSEPH_AND_ST_MARYS) {
                         // teleported to hospital so travel back to encounter location
-                        char *prevLocation = lastRoundMessage[0];
-                        strcat(prevLocation, lastRoundMessage[2]);
+                        char *prevLocation = &lastRoundMessage[0];
+                        strcat(prevLocation, &lastRoundMessage[2]);
                         LocationID encounterLoc = abbrevToID(prevLocation);
                         Map g = newMap();
                         LocationID path[NUM_LOCATIONS];
@@ -128,19 +128,19 @@ void decideHunterMove(HunterView gameState) {
                             message = lastRoundMessage;
                         } else if ((railDist == 2 && railMove >= 2) || (railDist == 3 && railMove == 3)) {
                             // take two or three rail moves to get to dest if legal
-                            message = prevLocation[0];
-                            strcat(message, health);
-                            strcat(message, prevLocation[1]);
+                            message = &prevLocation[0];
+                            strcat(message, (char *) &health);
+                            strcat(message, &prevLocation[1]);
                             bestPlay = prevLocation;
                         } else {
                             bestPlay = idToAbbrev(path[1]);
-                            message = prevLocation[0];
+                            message = &prevLocation[0];
                             if (bestPlay == prevLocation) {
-                                strcat(message, health);
+                                strcat(message, (char *) &health);
                             } else {
                                 strcat(message, "H");
                             }
-                            strcat(message, prevLocation[1]);
+                            strcat(message, &prevLocation[1]);
                         }
                     } else {
                         // continue on with random moves
@@ -162,12 +162,12 @@ void decideHunterMove(HunterView gameState) {
                     Map g = newMap();
                     LocationID path[NUM_LOCATIONS];
                     TransportID trans[NUM_LOCATIONS];
-                    shortestPath(g, currLoc, encounterLoc, path, trans);'
+                    shortestPath(g, currLoc, encounterLoc, path, trans);
                     LocationID hitCurrLoc = whereIs(gameState, hitHunter);
                     if (hitCurrLoc == ST_JOSEPH_AND_ST_MARYS) {
-                        char *hitString = PlayerMessage[((round-1)*NUM_PLAYERS)+id-order];
-                        char *destination = hitString[0];
-                        strcat(destination, hitString[2]);
+                        char *hitString = gameview->messages[((round-1)*NUM_PLAYERS)+id-order];
+                        char *destination = &hitString[0];
+                        strcat(destination, &hitString[2]);
                         
                         
                     
@@ -190,8 +190,8 @@ void decideHunterMove(HunterView gameState) {
                 
                 
                 
-                char *encounter = prevHuntMessage[3];
-                strcat(encounter, prevHuntMessage[4]);
+                char *encounter = &prevHuntMessage[3];
+                strcat(encounter, &prevHuntMessage[4]);
                 LocationID encounterID = abbrevToID(encounter);
                 bestPlay = dracEncounter(gameState, encounterID, id, ((int)prevHuntMessage[5] + 1));
                 
