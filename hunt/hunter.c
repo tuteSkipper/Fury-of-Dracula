@@ -63,8 +63,8 @@ void decideHunterMove(HunterView gameState) {
             } else {
                 // still on path towards dest
                 Map g = newMap();
-                LocationID path[NUM_LOCATIONS];
-                TransportID trans[NUM_LOCATIONS];
+                LocationID path[NUM_MAP_LOCATIONS];
+                TransportID trans[NUM_MAP_LOCATIONS];
                 shortestPath(g, current, encounterLoc, path, trans);
                 int railDist = getDist(g, RAIL, current, encounterLoc); // length of any direct rail connections to dest
                 int railMove = (round + id) % NUM_HUNTERS; // max. no of steps by rail
@@ -116,15 +116,15 @@ void decideHunterMove(HunterView gameState) {
                         strcat(prevLocation, &lastRoundMessage[2]);
                         LocationID encounterLoc = abbrevToID(prevLocation);
                         Map g = newMap();
-                        LocationID path[NUM_LOCATIONS];
-                        TransportID trans[NUM_LOCATIONS];
+                        LocationID path[NUM_MAP_LOCATIONS];
+                        TransportID trans[NUM_MAP_LOCATIONS];
                         shortestPath(g, currLoc, encounterLoc, path, trans);
-                        int railDist = getDist(g, RAIL, current, encounterLoc); // length of any direct rail connections to dest
+                        int railDist = getDist(g, RAIL, currLoc, encounterLoc); // length of any direct rail connections to dest
                         int railMove = (round + id) % NUM_HUNTERS; // max. no of steps by rail
                         
                         if (trans[1] == RAIL && railMove == 0) {
                             // if next dest is illegal RAIL move, rest until next turn
-                            bestPlay = idToAbbrev(current);
+                            bestPlay = idToAbbrev(currLoc);
                             message = lastRoundMessage;
                         } else if ((railDist == 2 && railMove >= 2) || (railDist == 3 && railMove == 3)) {
                             // take two or three rail moves to get to dest if legal
@@ -160,27 +160,15 @@ void decideHunterMove(HunterView gameState) {
                         tempOrder--;
                     }
                     Map g = newMap();
-                    LocationID path[NUM_LOCATIONS];
-                    TransportID trans[NUM_LOCATIONS];
+                    LocationID path[NUM_MAP_LOCATIONS];
+                    TransportID trans[NUM_MAP_LOCATIONS];
                     shortestPath(g, currLoc, encounterLoc, path, trans);
                     LocationID hitCurrLoc = whereIs(gameState, hitHunter);
                     if (hitCurrLoc == ST_JOSEPH_AND_ST_MARYS) {
                         char *hitString = gameview->messages[((round-1)*NUM_PLAYERS)+id-order];
                         char *destination = &hitString[0];
                         strcat(destination, &hitString[2]);
-                        
-                        
-                    
-                    
-                    
-                    
                     }
-                    
-                    
-                    
-                    
-                    
-                    
                     
                     
                 }
@@ -222,8 +210,8 @@ void decideHunterMove(HunterView gameState) {
         bestPlay = sedwardMove(gameState);
         char *GDmessage = gameState->messages[((round-1)*NUM_PLAYERS)];
         int GDhealth = howHealthyIs(gameState, PLAYER_LORD_GODALMING);
+        int order = (int)GDmessage[5] + 1;
         if (GDmessage[1] == 'D') { // During a 'D' round (a hunter lost health in that round)
-            int order = (int)GDmessage[5] + 1;
             message = GDmessage;
             message[5] = order;
         } else if (GDmessage[1] != 'H' && GDhealth < (int)GDmessage[1]) { // GOLDALMING lost health
