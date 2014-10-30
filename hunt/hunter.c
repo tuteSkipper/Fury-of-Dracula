@@ -42,12 +42,12 @@ struct hunterView {
 };
 
 void decideHunterMove(HunterView gameState) {
-    char *bestPlay = "";
-    char *message = "";
+    char *bestPlay = malloc(2*sizeof(char)+1);
+    char *message = malloc(MAX_MESSAGE_LENGTH*sizeof(char)+1);
     
     PlayerID id = whoAmI(gameState);
     int health = howHealthyIs(gameState, id);
-    int round = giveMeTheRound(gameState);
+    int roundNum = giveMeTheRound(gameState);
     
     // Each play is allocated 3 bytes for their memory (normal or 'H' Move):
     // 1: First letter of their locations abbrev
@@ -62,12 +62,11 @@ void decideHunterMove(HunterView gameState) {
     
     // After each hunter has gone through a 'D' turn, it changes in to an 'H' turn next round
     
-    if (round > 0 && id != PLAYER_DR_SEWARD) {
-        char *lastRoundMessage = NULL;
-        strncpy(lastRoundMessage, (char *) &(gameState->g->messages[((round-1)*NUM_PLAYERS)+id]), MAX_MESSAGE_LENGTH);
+    if ((roundNum > 0)&&(id != PLAYER_DR_SEWARD)) {        
+        char *lastRoundMessage = malloc(sizeof(char)*MAX_MESSAGE_LENGTH);
+        strncpy(lastRoundMessage, (char *) &(gameState->g->messages[((roundNum-1)*NUM_PLAYERS)+id]), MAX_MESSAGE_LENGTH);
         //^gotta strncpy this later
         if (lastRoundMessage[1] == 'H' || lastRoundMessage[1] == 'D') { // hunt is ON - go towards place in string
-            
             /* When hunt is on, our destination should be stored via messages
              and retrieved by looking at prev round message.
              Only when destination is reached should random moves return and
@@ -93,7 +92,7 @@ void decideHunterMove(HunterView gameState) {
                 TransportID trans[NUM_MAP_LOCATIONS];
                 shortestPath(g, current, encounterLoc, path, trans);
                 int railDist = getDist(g, RAIL, current, encounterLoc); // length of any direct rail connections to dest
-                int railMove = (round + id) % NUM_HUNTERS; // max. no of steps by rail
+                int railMove = (roundNum + id) % NUM_HUNTERS; // max. no of steps by rail
                 
                 if (trans[1] == RAIL && railMove == 0) {
                     // if next dest is illegal RAIL move, rest until next turn
@@ -127,9 +126,8 @@ void decideHunterMove(HunterView gameState) {
             } else {
                 prevPlayer = id - 1;
             }
-            char *prevHuntMessage = gameState->g->messages[(round*NUM_PLAYERS)+prevPlayer];
+            char *prevHuntMessage = gameState->g->messages[(roundNum*NUM_PLAYERS)+prevPlayer];
             //int newHealth = howHealthyIs(gameState, prevPlayer);
-            
             if (prevHuntMessage[1] == 'D') {
                 // 1. Check if curr. player was the one who intially lost health - no need to hunt
                 // far unless at hospital
@@ -146,7 +144,7 @@ void decideHunterMove(HunterView gameState) {
                         TransportID trans[NUM_MAP_LOCATIONS];
                         shortestPath(g, currLoc, encounterLoc, path, trans);
                         int railDist = getDist(g, RAIL, currLoc, encounterLoc); // length of any direct rail connections to dest
-                        int railMove = (round + id) % NUM_HUNTERS; // max. no of steps by rail
+                        int railMove = (roundNum + id) % NUM_HUNTERS; // max. no of steps by rail
                         
                         if (trans[1] == RAIL && railMove == 0) {
                             // if next dest is illegal RAIL move, rest until next turn
@@ -188,7 +186,7 @@ void decideHunterMove(HunterView gameState) {
                     }
                     LocationID hitCurrLoc = whereIs(gameState, hitHunter);
                     if (hitCurrLoc == ST_JOSEPH_AND_ST_MARYS) {
-                        char *hitString = gameState->g->messages[((round-1)*NUM_PLAYERS)+id-order];
+                        char *hitString = gameState->g->messages[((roundNum-1)*NUM_PLAYERS)+id-order];
                         char *encountName = &hitString[0];
                         strcat(encountName, &hitString[2]);
                         LocationID encounterLoc = abbrevToID(encountName);
@@ -198,7 +196,7 @@ void decideHunterMove(HunterView gameState) {
                         TransportID trans[NUM_MAP_LOCATIONS];
                         shortestPath(g, currLoc, encounterLoc, path, trans);
                         
-                        if (trans[1] == RAIL && (round + id) % NUM_HUNTERS == 0) {
+                        if (trans[1] == RAIL && (roundNum + id) % NUM_HUNTERS == 0) {
                             // if next dest is illegal RAIL move, rest until next turn
                             bestPlay = idToAbbrev(currLoc);
                         } else {
@@ -223,7 +221,7 @@ void decideHunterMove(HunterView gameState) {
                 
                 
             }
-            
+            // segfault due to not having an else here?????
             
             
             
@@ -237,9 +235,9 @@ void decideHunterMove(HunterView gameState) {
         }
         
     
-    } else if (round > 0 && id == PLAYER_DR_SEWARD) {
+    } else if (roundNum > 0 && id == PLAYER_DR_SEWARD) {
         bestPlay = sedwardMove(gameState);
-        char *GDmessage = gameState->g->messages[((round-1)*NUM_PLAYERS)];
+        char *GDmessage = gameState->g->messages[((roundNum-1)*NUM_PLAYERS)];
         int GDhealth = howHealthyIs(gameState, PLAYER_LORD_GODALMING);
         int order = (int)GDmessage[5] + 1;
         if (GDmessage[1] == 'D') { // During a 'D' round (a hunter lost health in that round)
