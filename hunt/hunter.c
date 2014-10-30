@@ -168,15 +168,21 @@ void decideHunterMove(HunterView gameState) {
                         }
                         tempOrder--;
                     }
+                    Map g = newMap();
+                    LocationID path[NUM_LOCATIONS];
+                    TransportID trans[NUM_LOCATIONS];
+                    shortestPath(g, currLoc, encounterLoc, path, trans);'
                     LocationID hitCurrLoc = whereIs(gameState, hitHunter);
                     if (hitCurrLoc == ST_JOSEPH_AND_ST_MARYS) {
-                        tempOrder = order - 1;
+                        char *hitString = PlayerMessage[((round-1)*NUM_PLAYERS)+id-order];
+                        char *destination = hitString[0];
+                        strcat(destination, hitString[2]);
                         
                         
-                        
-                        
-                        
-                        
+                    
+                    
+                    
+                    
                     }
                     
                     
