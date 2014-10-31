@@ -85,8 +85,8 @@ void decideHunterMove(HunterView gameState) {
             } else {
                 // still on path towards dest
                 Map g = newMap();
-                LocationID path[NUM_MAP_LOCATIONS];
-                TransportID trans[NUM_MAP_LOCATIONS];
+                LocationID *path = malloc(sizeof(char)*NUM_MAP_LOCATIONS);
+                TransportID *trans = malloc(sizeof(char)*NUM_MAP_LOCATIONS);
                 shortestPath(g, current, encounterLoc, path, trans);
                 int railDist = getDist(g, RAIL, current, encounterLoc); // length of any direct rail connections to dest
                 int railMove = (roundNum + id) % NUM_HUNTERS; // max. no of steps by rail
@@ -138,8 +138,8 @@ void decideHunterMove(HunterView gameState) {
                         strcat(prevLocation, &lastRoundMessage[2]);
                         LocationID encounterLoc = abbrevToID(prevLocation);
                         Map g = newMap();
-                        LocationID path[NUM_MAP_LOCATIONS];
-                        TransportID trans[NUM_MAP_LOCATIONS];
+                        LocationID *path = malloc(sizeof(char)*NUM_MAP_LOCATIONS);
+                        TransportID *trans = malloc(sizeof(char)*NUM_MAP_LOCATIONS);
                         shortestPath(g, currLoc, encounterLoc, path, trans);
                         int railDist = getDist(g, RAIL, currLoc, encounterLoc); // length of any direct rail connections to dest
                         int railMove = (roundNum + id) % NUM_HUNTERS; // max. no of steps by rail
@@ -191,8 +191,8 @@ void decideHunterMove(HunterView gameState) {
                         LocationID encounterLoc = abbrevToID(encountName);
                         LocationID currLoc = whereIs(gameState, id);
                         Map g = newMap();
-                        LocationID path[NUM_MAP_LOCATIONS];
-                        TransportID trans[NUM_MAP_LOCATIONS];
+                        LocationID *path = malloc(sizeof(char)*NUM_MAP_LOCATIONS);
+                        TransportID *trans = malloc(sizeof(char)*NUM_MAP_LOCATIONS);
                         shortestPath(g, currLoc, encounterLoc, path, trans);
                         
                         if (trans[1] == RAIL && (roundNum + id) % NUM_HUNTERS == 0) {
@@ -216,7 +216,6 @@ void decideHunterMove(HunterView gameState) {
                 /* After the first round, generic checking of prev player's current health
                  against their health at the beginning of their turn by looking at the middle
                  letter of string - if less than when started, 'D' turn is activated */
-                
                 int newHealth = howHealthyIs(gameState, prevPlayer);
                 int oldHealth = (int)prevHuntMessage[1];
                 LocationID currLoc = whereIs(gameState, id);
@@ -228,8 +227,8 @@ void decideHunterMove(HunterView gameState) {
                         strcat(location, &prevHuntMessage[2]);
                         LocationID encounterLoc = abbrevToID(location);
                         Map g = newMap();
-                        LocationID path[NUM_MAP_LOCATIONS];
-                        TransportID trans[NUM_MAP_LOCATIONS];
+                        LocationID *path = malloc(sizeof(char)*NUM_MAP_LOCATIONS);
+                        TransportID *trans = malloc(sizeof(char)*NUM_MAP_LOCATIONS);
                         shortestPath(g, currLoc, encounterLoc, path, trans);
                         
                         if (trans[1] == RAIL && (roundNum + id) % NUM_HUNTERS == 0) {
@@ -310,7 +309,7 @@ void decideHunterMove(HunterView gameState) {
 
 static char *randomDest (HunterView currentView, LocationID current, PlayerID hunter) {
     int *numLocations = malloc(sizeof(int));
-    char *dest = "";
+    char *dest = malloc(sizeof(char)*2);
     LocationID *connections = whereCanTheyGo(currentView, numLocations, hunter, TRUE, FALSE, TRUE);
     int counter = 0;
     if ((hunter == PLAYER_MINA_HARKER)||(hunter == PLAYER_VAN_HELSING)) {
@@ -326,9 +325,9 @@ static char *randomDest (HunterView currentView, LocationID current, PlayerID hu
             counter++;
         }
         if (next != UNKNOWN_LOCATION) {
-            dest = idToAbbrev(next);
+            strcpy(dest, idToAbbrev(next));
         } else {
-            dest = idToAbbrev(highest);
+            strcpy(dest, idToAbbrev(highest));
         }
     } else if (hunter == PLAYER_LORD_GODALMING) {
         LocationID next = NUM_MAP_LOCATIONS;
@@ -343,9 +342,9 @@ static char *randomDest (HunterView currentView, LocationID current, PlayerID hu
             counter++;
         }
         if (next != NUM_MAP_LOCATIONS) {
-            dest = idToAbbrev(next);
+            strcpy(dest, idToAbbrev(next));
         } else {
-            dest = idToAbbrev(lowest);
+            strcpy(dest, idToAbbrev(lowest));
         }
     }
     free(numLocations);
@@ -355,34 +354,32 @@ static char *randomDest (HunterView currentView, LocationID current, PlayerID hu
 
 
 static char *sedwardMove (HunterView currentView) {
-    char *bestPlay = NULL;
+    char *bestPlay = malloc(sizeof(char)*2);
     PlayerID id = whoAmI(currentView);
-    
     if (whereIs(currentView,id) == UNKNOWN_LOCATION) {
-        bestPlay = "GA";
+        strcpy(bestPlay, "GA");
     } else if (whereIs(currentView,id) == ST_JOSEPH_AND_ST_MARYS) {
-        bestPlay = "SZ";
+        strcpy(bestPlay, "SZ");
     } else if (whereIs(currentView,id) == CASTLE_DRACULA) {
-        bestPlay = "KL";
+        strcpy(bestPlay, "KL");
     } else if (whereIs(currentView,id) == KLAUSENBURG) {
-        bestPlay = "SZ";
+        strcpy(bestPlay, "SZ");
     } else if (whereIs(currentView,id) == SZEGED) {
-        bestPlay = "BE";
+        strcpy(bestPlay, "BE");
     } else if (whereIs(currentView,id) == BELGRADE) {
-        bestPlay = "BC";
+        strcpy(bestPlay, "BC");
     } else if (whereIs(currentView,id) == BUCHAREST) {
-        bestPlay = "GA";
+        strcpy(bestPlay, "GA");
     } else if (whereIs(currentView,id) == GALATZ) {
-        bestPlay = "CD";
+        strcpy(bestPlay, "CD");
     }
-    
     return bestPlay;
 }
 
 
 static char *dracEncounter (HunterView currentView, LocationID encounter, PlayerID hitHunter, int order) {
     int *numLocations = malloc(sizeof(int));
-    char *dest = "";
+    char *dest = malloc(sizeof(char)*2);
     order -= 1;
     
     LocationID *connections = whereCanTheyGo(currentView, numLocations, hitHunter, TRUE, FALSE, TRUE);
@@ -391,10 +388,9 @@ static char *dracEncounter (HunterView currentView, LocationID encounter, Player
     }
     
     LocationID destination = connections[order];
-    dest = idToAbbrev(destination);
+    strcpy(dest, idToAbbrev(destination));
     
     free(numLocations);
-    
-    
+
     return dest;
 }
