@@ -40,7 +40,6 @@ struct hunterView {
     // chronological order [as best as we know]
     LocationID trailLocs[TRAIL_SIZE];
 };
-
 void decideHunterMove(HunterView gameState) {
     char *bestPlay = malloc(2*sizeof(char)+1);
     char *message = malloc(MAX_MESSAGE_LENGTH*sizeof(char)+1);
@@ -124,7 +123,8 @@ void decideHunterMove(HunterView gameState) {
             } else {
                 prevPlayer = id - 1;
             }
-            char *prevHuntMessage = gameState->g->messages[(roundNum*NUM_PLAYERS)+prevPlayer];
+            char *prevHuntMessage = malloc(sizeof(char)*MAX_MESSAGE_LENGTH);
+            strncpy(prevHuntMessage, (char *) &(gameState->g->messages[(roundNum*NUM_PLAYERS)+prevPlayer]), MAX_MESSAGE_LENGTH);
             //int newHealth = howHealthyIs(gameState, prevPlayer);
             if (prevHuntMessage[1] == 'D') {
                 // 1. Check if curr. player was the one who intially lost health - no need to hunt
@@ -244,7 +244,7 @@ void decideHunterMove(HunterView gameState) {
                     } else {
                         // 2. b) Access from hurt Hunter's location
                         bestPlay = dracEncounter(gameState, prevLoc, prevPlayer, 1);
-                        message = &bestPlay[0];
+                        strcpy(message, &bestPlay[0]);
                         strcat(message, "D");
                         strcat(message, &bestPlay[1]);
                     }
@@ -253,9 +253,10 @@ void decideHunterMove(HunterView gameState) {
                 } else {
                     // Nothing of interest - continue on with generic random move turn
                     bestPlay = randomDest(gameState, currLoc, id);
-                    message = &bestPlay[0];
-                    int *healthPtr = &health;
-                    strcat(message, (char *)healthPtr);
+                    strcpy(message, &bestPlay[0]);
+                    // int *healthPtr = &health;
+                    // strcat(message, (char *)healthPtr);
+                    strcat(message, (char *)&health);
                     strcat(message, &bestPlay[1]);
                 }
             }

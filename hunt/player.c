@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
    // char *plays = "GZA....";
    // char *plays = "GZA.... SED....";
    // char *plays = "GZA.... SED.... HZU....";
-   char *plays = "GSR.... SCD.... HHA.... MVE.... DCD....";
+   // char *plays = "GSR.... SCD.... HHA.... MVE.... DCD....";
    // char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... GTO....";
    // char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... GTO.... SKL....";
    // char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... GTO.... SKL.... HFR....";
@@ -73,6 +73,11 @@ int main(int argc, char *argv[])
    // char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... GTO.... SKL.... HFR.... MMU.... DSR.... GBA.... SSZ.... HCO.... MMI.... DSZ.... GBO.... SBE.... HBU.... MMR.... DBE.... GCF.... SBC.... HAM....";
    // char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... GTO.... SKL.... HFR.... MMU.... DSR.... GBA.... SSZ.... HCO.... MMI.... DSZ.... GBO.... SBE.... HBU.... MMR.... DBE.... GCF.... SBC.... HAM.... MGO.... DBC....";
 
+   char *plays = "GSR.... SGA.... HHA.... MVE.... DCD.... "
+                 "GTO.... SCD.... HCD.... MCD.... DSR.... "
+                 "GBA.... SKL.... HBE....";
+   // ^TESTS NEW AND IMPROVED HUNTER
+
    // char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... "
    //               "GTO.... SKL.... HFR.... MMU.... DSR.... "
    //               "GBA.... SSZ.... HCO.... MMI.... DSZ.... "
@@ -83,7 +88,7 @@ int main(int argc, char *argv[])
    //               "GMS.... SKL.... HCO.... MMU.... DKL.... "
    //               "GTS.... SSZ.... HBU.... MMI.... DSZ.... "
    //               "GCG.... SBE.... HAM....";
-
+   // ^TESTS RANDOM HUNTER
    PlayerMessage msgs[3] = { "", "", "" };
    gameState = newHunterView(plays,msgs);
    decideHunterMove(gameState);
