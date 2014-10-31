@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
    // char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... GTO.... SKL.... HFR.... MMU.... DSR.... GBA.... SSZ.... HCO.... MMI.... DSZ.... GBO.... SBE.... HBU.... MMR.... DBE.... GCF.... SBC.... HAM.... MGO.... DBC....";
 
    char *plays = "GSR.... SGA.... HHA.... MVE.... DCD.... "
-                 "GTO.... SCD.... HCD.... MCD.... DSR.... "
+                 "GTO.... SCD.... HCD.... MCD.... DKL.... "
                  "GBA.... SKL.... HBE....";
    // ^TESTS NEW AND IMPROVED HUNTER
 
