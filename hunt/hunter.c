@@ -413,9 +413,23 @@ static char *dracEncounter (HunterView currentView, LocationID encounter, Player
         order = numLocations[0] - 1;
     }
     
+    Map g = newMap();
+    LocationID *path = malloc(sizeof(char)*NUM_MAP_LOCATIONS);
+    TransportID *trans = malloc(sizeof(char)*NUM_MAP_LOCATIONS);
     LocationID destination = connections[order];
-    strcpy(dest, idToAbbrev(destination));
-    
+    PlayerID player = whoAmI(currentView);
+    LocationID playerLoc = whereIs(currentView, player);
+    shortestPath(g, playerLoc, destination, path, trans);
+        
+    if (trans[1] == RAIL && (giveMeTheRound(currentView) + player) % NUM_HUNTERS == 0) {
+        // if next dest is illegal RAIL move, rest until next turn
+        dest = idToAbbrev(playerLoc);
+    } else {
+        dest = idToAbbrev(path[1]);
+    }
+
+    //strcpy(dest, idToAbbrev(destination));
+
     free(numLocations);
 
     return dest;
