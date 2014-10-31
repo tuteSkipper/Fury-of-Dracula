@@ -164,18 +164,23 @@ int  getDist(Map g, TransportID t, LocationID a, LocationID b) {
 
 
 int shortestPath(Map g, LocationID start, LocationID end, LocationID path[], TransportID trans[]){
+    // printf("Here\n");
     assert((g != NULL) && (validPlace(start)) && validPlace(end));
     VList curr;
     // case 0: going to itself
-    if (start == end)
+    if (start == end) {
+        // printf("Here1\n");
         return 0;
     // case 1: if there is a direct connection
+    }
+
     for (curr = g->connections[start]; curr->next != NULL; curr = curr->next) {
         if (curr->v == end) {
             path[0] = start;
             trans[0] = ANY;
             path[1] = end;
             trans[1] = curr->type;
+            // printf("Here1\n");
             return 2;
         }
     }
