@@ -59,10 +59,19 @@ void decideHunterMove(HunterView gameState) {
     
     // After each hunter has gone through a 'D' turn, it changes in to an 'H' turn next round
     
-    if ((roundNum > 0)&&(id != PLAYER_DR_SEWARD)) {        
+    if ((roundNum > 0)&&(id != PLAYER_DR_SEWARD)) {
         char *lastRoundMessage = malloc(sizeof(char)*MAX_MESSAGE_LENGTH);
         strncpy(lastRoundMessage, (char *) &(gameState->g->messages[((roundNum-1)*NUM_PLAYERS)+id]), MAX_MESSAGE_LENGTH);
         //^gotta strncpy this later
+        if (strcmp(lastRoundMessage, "") == 0) {
+            bestPlay = randomDest(gameState, whereIs(gameState, id), id);
+            message = &bestPlay[0];
+            strcat(message, (char *) &health);
+            strcat(message, &bestPlay[1]);
+            registerBestPlay(bestPlay,message);
+            return;
+        }
+        
         if (lastRoundMessage[1] == 'H' || lastRoundMessage[1] == 'D') { // hunt is ON - go towards place in string
             /* When hunt is on, our destination should be stored via messages
              and retrieved by looking at prev round message.
@@ -125,7 +134,16 @@ void decideHunterMove(HunterView gameState) {
             }
             char *prevHuntMessage = malloc(sizeof(char)*MAX_MESSAGE_LENGTH);
             strncpy(prevHuntMessage, (char *) &(gameState->g->messages[(roundNum*NUM_PLAYERS)+prevPlayer]), MAX_MESSAGE_LENGTH);
-            //int newHealth = howHealthyIs(gameState, prevPlayer);
+            
+            if (strcmp(prevHuntMessage, "") == 0) {
+                bestPlay = randomDest(gameState, whereIs(gameState, id), id);
+                message = &bestPlay[0];
+                strcat(message, (char *) &health);
+                strcat(message, &bestPlay[1]);
+                registerBestPlay(bestPlay,message);
+                return;
+            }
+            
             if (prevHuntMessage[1] == 'D') {
                 // 1. Check if curr. player was the one who intially lost health - no need to hunt
                 // far unless at hospital
@@ -263,21 +281,28 @@ void decideHunterMove(HunterView gameState) {
     } else if (roundNum > 0 && id == PLAYER_DR_SEWARD) {
         bestPlay = sedwardMove(gameState);
         char *GDmessage = gameState->g->messages[((roundNum-1)*NUM_PLAYERS)];
-        int GDhealth = howHealthyIs(gameState, PLAYER_LORD_GODALMING);
-        int order = (int)GDmessage[3] + 1;
-        if (GDmessage[1] == 'D') { // During a 'D' round (a hunter lost health in that round)
-            message = GDmessage;
-            message[3] = order;
-        } else if (GDmessage[1] != 'H' && GDhealth < (int)GDmessage[1]) { // GOLDALMING lost health
-            if (order > 3) { // Sedward was one who lost health initially
-                message[0] = bestPlay[0];
-                message[1] = health;
-                message[2] = bestPlay[1];
-            } else { // Pass on 'D' message
-                message[0] = bestPlay[0];
-                message[1] = 'D';
-                message[2] = bestPlay[1];
+        
+        if (strcmp(GDmessage, "") == 0) {
+            message = &bestPlay[0];
+            strcat(message, (char *) &health);
+            strcat(message, &bestPlay[1]);
+        } else {
+            int GDhealth = howHealthyIs(gameState, PLAYER_LORD_GODALMING);
+            int order = (int)GDmessage[3] + 1;
+            if (GDmessage[1] == 'D') { // During a 'D' round (a hunter lost health in that round)
+                message = GDmessage;
                 message[3] = order;
+            } else if (GDmessage[1] != 'H' && GDhealth < (int)GDmessage[1]) { // GOLDALMING lost health
+                if (order > 3) { // Sedward was one who lost health initially
+                    message[0] = bestPlay[0];
+                    message[1] = health;
+                    message[2] = bestPlay[1];
+                } else { // Pass on 'D' message
+                    message[0] = bestPlay[0];
+                    message[1] = 'D';
+                    message[2] = bestPlay[1];
+                    message[3] = order;
+                }
             }
         }
     } else {
