@@ -63,14 +63,14 @@ void decideHunterMove(HunterView gameState) {
         char *lastRoundMessage = malloc(sizeof(char)*MAX_MESSAGE_LENGTH);
         strncpy(lastRoundMessage, (char *) &(gameState->g->messages[((roundNum-1)*NUM_PLAYERS)+id]), MAX_MESSAGE_LENGTH);
         //^gotta strncpy this later
-        if (strcmp(lastRoundMessage, "") == 0) {
-            bestPlay = randomDest(gameState, whereIs(gameState, id), id);
-            message = &bestPlay[0];
-            strcat(message, (char *) &health);
-            strcat(message, &bestPlay[1]);
-            registerBestPlay(bestPlay,message);
-            return;
-        }
+        // if (strcmp(lastRoundMessage, "") == 0) {
+        //     bestPlay = randomDest(gameState, whereIs(gameState, id), id);
+        //     message = &bestPlay[0];
+        //     strcat(message, (char *) &health);
+        //     strcat(message, &bestPlay[1]);
+        //     registerBestPlay(bestPlay,message);
+        //     return;
+        // }
         
         if (lastRoundMessage[1] == 'H' || lastRoundMessage[1] == 'D') { // hunt is ON - go towards place in string
             /* When hunt is on, our destination should be stored via messages
@@ -135,14 +135,14 @@ void decideHunterMove(HunterView gameState) {
             char *prevHuntMessage = malloc(sizeof(char)*MAX_MESSAGE_LENGTH);
             strncpy(prevHuntMessage, (char *) &(gameState->g->messages[(roundNum*NUM_PLAYERS)+prevPlayer]), MAX_MESSAGE_LENGTH);
             
-            if (strcmp(prevHuntMessage, "") == 0) {
-                bestPlay = randomDest(gameState, whereIs(gameState, id), id);
-                message = &bestPlay[0];
-                strcat(message, (char *) &health);
-                strcat(message, &bestPlay[1]);
-                registerBestPlay(bestPlay,message);
-                return;
-            }
+            // if (strcmp(prevHuntMessage, "") == 0) {
+            //     bestPlay = randomDest(gameState, whereIs(gameState, id), id);
+            //     message = &bestPlay[0];
+            //     strcat(message, (char *) &health);
+            //     strcat(message, &bestPlay[1]);
+            //     registerBestPlay(bestPlay,message);
+            //     return;
+            // }
             
             if (prevHuntMessage[1] == 'D') {
                 // 1. Check if curr. player was the one who intially lost health - no need to hunt
@@ -259,6 +259,7 @@ void decideHunterMove(HunterView gameState) {
                         strcat(message, "D");
                         strcat(message, &location[1]);
                     } else {
+                    printf("Here\n");
                         // 2. b) Access from hurt Hunter's location
                         bestPlay = dracEncounter(gameState, prevLoc, prevPlayer, 1);
                         strcpy(message, &bestPlay[0]);

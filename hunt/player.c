@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
    // char *plays = "GSR.... SCD.... HHA.... MVE.... DCD.... GTO.... SKL.... HFR.... MMU.... DSR.... GBA.... SSZ.... HCO.... MMI.... DSZ.... GBO.... SBE.... HBU.... MMR.... DBE.... GCF.... SBC.... HAM.... MGO.... DBC....";
 
    char *plays = "GSR.... SGA.... HHA.... MVE.... DCD.... "
-                 "GTO.... SCD...."; //HCD.... MCD.... DKL.... "
+                 "GTO.... SCD...."; // HCD.... MCD.... DKL.... "
                  // "GBA.... SKL.... HBE....";
    // ^TESTS NEW AND IMPROVED HUNTER
 
@@ -89,7 +89,8 @@ int main(int argc, char *argv[])
    //               "GTS.... SSZ.... HBU.... MMI.... DSZ.... "
    //               "GCG.... SBE.... HAM....";
    // ^TESTS RANDOM HUNTER
-   PlayerMessage msgs[3] = { "", "", "" };
+   PlayerMessage msgs[7] = { "S    R", "G    A", "H    A", "V    E", "",
+                             "TO   O", "C    D"};
    gameState = newHunterView(plays,msgs);
    decideHunterMove(gameState);
    disposeHunterView(gameState);
